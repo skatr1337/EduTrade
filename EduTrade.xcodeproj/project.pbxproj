@@ -6,6 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		DE37C6D72CF8E68000EDDDD9 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = DE37C6D62CF8E68000EDDDD9 /* FirebaseAnalytics */; };
+		DE37C72B2CF8ECFC00EDDDD9 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = DE37C72A2CF8ECFC00EDDDD9 /* FirebaseAuth */; };
+		DE5F8B9F2CFCF0B90059AD1E /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = DE5F8B9E2CFCF0B90059AD1E /* FirebaseFirestore */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		DE1774912CE4F9C60012613C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +58,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DE37C6D72CF8E68000EDDDD9 /* FirebaseAnalytics in Frameworks */,
+				DE37C72B2CF8ECFC00EDDDD9 /* FirebaseAuth in Frameworks */,
+				DE5F8B9F2CFCF0B90059AD1E /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +87,7 @@
 				DE17747D2CE4F9C40012613C /* EduTrade */,
 				DE1774932CE4F9C60012613C /* EduTradeTests */,
 				DE17749D2CE4F9C60012613C /* EduTradeUITests */,
+				DE37C7292CF8ECFC00EDDDD9 /* Frameworks */,
 				DE17747C2CE4F9C40012613C /* Products */,
 			);
 			sourceTree = "<group>";
@@ -90,6 +100,13 @@
 				DE17749A2CE4F9C60012613C /* EduTradeUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		DE37C7292CF8ECFC00EDDDD9 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -112,6 +129,9 @@
 			);
 			name = EduTrade;
 			packageProductDependencies = (
+				DE37C6D62CF8E68000EDDDD9 /* FirebaseAnalytics */,
+				DE37C72A2CF8ECFC00EDDDD9 /* FirebaseAuth */,
+				DE5F8B9E2CFCF0B90059AD1E /* FirebaseFirestore */,
 			);
 			productName = EduTrade;
 			productReference = DE17747B2CE4F9C40012613C /* EduTrade.app */;
@@ -195,6 +215,9 @@
 			);
 			mainGroup = DE1774722CE4F9C40012613C;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				DE37C6D52CF8E68000EDDDD9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = DE17747C2CE4F9C40012613C /* Products */;
 			projectDirPath = "";
@@ -552,6 +575,35 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		DE37C6D52CF8E68000EDDDD9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.5.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		DE37C6D62CF8E68000EDDDD9 /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DE37C6D52CF8E68000EDDDD9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		DE37C72A2CF8ECFC00EDDDD9 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DE37C6D52CF8E68000EDDDD9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		DE5F8B9E2CFCF0B90059AD1E /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DE37C6D52CF8E68000EDDDD9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = DE1774732CE4F9C40012613C /* Project object */;
 }

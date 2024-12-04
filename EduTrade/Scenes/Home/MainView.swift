@@ -7,71 +7,74 @@
 
 import SwiftUI
 
-struct ContentView: View {
+struct MainView: View {
     @State private var selectedIndex: Int = 0
+    @EnvironmentObject var viewModel: AuthViewModel
 
     var body: some View {
-        TabView (selection: $selectedIndex) {
-            HomeView(viewModel: HomeViewModel())
-                .tabItem {
-                    Image(systemName: "house")
-                    Text("Home")
-                }
-            Text("Trade")
-                .tabItem {
-                    Image(systemName: "bitcoinsign.circle.fill")
-                    Text("Trade")
-                }
+        if let user = viewModel.currentUser {
+            TabView (selection: $selectedIndex) {
+                HomeView(viewModel: HomeViewModel())
+                    .tabItem {
+                        Image(systemName: "house")
+                        Text("Home")
+                    }
+                Text("Trade")
+                    .tabItem {
+                        Image(systemName: "bitcoinsign.circle.fill")
+                        Text("Trade")
+                    }
 
-            List {
-                Section {
-                    HStack{
-                        Text("MB")
-                            .font(.title)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.white)
-                            .frame(width: 72, height: 72)
-                            .background(Color(.systemGray3))
-                            .clipShape(Circle())
-                        
-                        VStack(alignment: .leading, spacing:4) {
-                            Text("Michael Bagietson")
-                                .font(.subheadline)
+                List {
+                    Section {
+                        HStack{
+                            Text(user.initials)
+                                .font(.title)
                                 .fontWeight(.semibold)
-                                .padding(.top, 4)
+                                .foregroundColor(.white)
+                                .frame(width: 72, height: 72)
+                                .background(Color(.systemGray3))
+                                .clipShape(Circle())
                             
-                            Text("test@gmail.com")
-                                .font(.footnote)
-                                .accentColor(.gray)
+                            VStack(alignment: .leading, spacing:4) {
+                                Text(user.fullname)
+                                    .font(.subheadline)
+                                    .fontWeight(.semibold)
+                                    .padding(.top, 4)
+                                
+                                Text(user.email)
+                                    .font(.footnote)
+                                    .accentColor(.gray)
+                            }
+                        }
+                    }
+                    
+                    Section("Account") {
+                        Button {
+                            viewModel.signOut()
+                        } label: {
+                            SettingsRowView(imageName: "arrow.left.circle.fill", title: "Sign out", tintColor: .red)
+                        }
+                        Button {
+                            print("Delete account")
+                        } label: {
+                            SettingsRowView(imageName: "arrow.left.circle.fill", title: "Delete account", tintColor: .red)
                         }
                     }
                 }
-                
-                Section("Account") {
-                    Button {
-                        print("Sign out")
-                    } label: {
-                        SettingsRowView(imageName: "arrow.left.circle.fill", title: "Sign out", tintColor: .red)
-                    }
-                    Button {
-                        print("Delete account")
-                    } label: {
-                        SettingsRowView(imageName: "arrow.left.circle.fill", title: "Delete account", tintColor: .red)
-                    }
+                .tabItem {
+                    Image(systemName: "person")
+                    Text("Profile")
                 }
             }
-            .tabItem {
-                Image(systemName: "person")
-                Text("Profile")
-            }
+            .onAppear(perform: {
+                UITabBar.appearance().unselectedItemTintColor = .systemGray
+                UITabBar.appearance().backgroundColor = .systemGray4.withAlphaComponent(0.4)
+            })
         }
-        .onAppear(perform: {
-            UITabBar.appearance().unselectedItemTintColor = .systemGray
-            UITabBar.appearance().backgroundColor = .systemGray4.withAlphaComponent(0.4)
-        })
     }
 }
 
 #Preview {
-    ContentView()
+   MainView()
 }
