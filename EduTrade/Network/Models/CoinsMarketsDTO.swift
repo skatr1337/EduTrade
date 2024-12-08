@@ -28,14 +28,12 @@ struct CoinMarketsDTO: Codable, Equatable {
     let market_cap_change_percentage_24h: Double
     let circulating_supply: Double
     let total_supply: Double
-//    let max_supply: Double
     let ath: Double
     let ath_change_percentage: Double
     let ath_date: String
     let atl: Double
     let atl_change_percentage: Double
     let atl_date: String
-//    let roi: Double
     let last_updated: String
 }
 

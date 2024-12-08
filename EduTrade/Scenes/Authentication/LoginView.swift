@@ -17,15 +17,13 @@ struct LoginView: View {
             VStack {
                 
                 // image
-                
                 Image("Bitcoin")
                     .resizable()
                     .scaledToFill()
                     .frame(width: 100, height: 120)
                     .padding(.vertical, 32)
                 
-                //form fields
-                
+                // form fields
                 VStack(spacing: 24) {
                     InputView(text: $email,
                               title: "Email Address",
@@ -42,7 +40,6 @@ struct LoginView: View {
                 .padding(.top, 12)
                 
                 //sign in button
-                
                 Button {
                     Task {
                         try await  viewModel.signIn(withEmail: email, password: password)
@@ -65,7 +62,6 @@ struct LoginView: View {
                 Spacer()
                 
                 //sign up button
-                
                 NavigationLink {
                     RegistrationView()
                         .navigationBarBackButtonHidden(true)

@@ -12,10 +12,14 @@ struct ContentView: View {
     
     var body: some View {
         Group {
-            if viewModel.userSession != nil {
-                MainView()
+            if viewModel.isLoading {
+                ProgressView()
             } else {
-                LoginView()
+                if viewModel.currentUser != nil {
+                    MainView()
+                } else {
+                    LoginView()
+                }
             }
         }
     }

@@ -1,5 +1,5 @@
 //
-//  User.swift
+//  UserDTO.swift
 //  EduTrade
 //
 //  Created by Filip Biegaj on 01/12/2024.
@@ -7,11 +7,13 @@
 
 import Foundation
 
-struct User: Identifiable, Codable {
+struct UserDTO: Identifiable, Codable {
     let id: String
     let fullname: String
     let email: String
-    
+}
+
+extension UserDTO {
     var initials: String {
         let formatter = PersonNameComponentsFormatter()
         if let components = formatter.personNameComponents(from: fullname) {
@@ -23,6 +25,6 @@ struct User: Identifiable, Codable {
     }
 }
 
-extension User {
-    static var MOCK_USER = User(id: NSUUID().uuidString, fullname: "Filip Biegaj", email: "filip@biegaj.com")
+extension UserDTO {
+    static var MOCK_USER = UserDTO(id: NSUUID().uuidString, fullname: "Filip Biegaj", email: "filip@biegaj.com")
 }

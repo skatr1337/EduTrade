@@ -11,4 +11,3 @@ class Requests {
         try await Endpoints.fetchCrypto.fetch()
     }
 }
-
