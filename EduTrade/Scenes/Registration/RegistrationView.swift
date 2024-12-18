@@ -13,9 +13,16 @@ struct RegistrationView: View {
     @State private var password = ""
     @State private var confirmPassword = ""
     @Environment(\.dismiss) var dismiss
-    @EnvironmentObject var viewModel: AuthViewModel
+    @EnvironmentObject var coordinator: MainCoordinator
+    @ObservedObject var viewModel: RegistrationViewModel
     
     var body: some View {
+        let formIsValid = viewModel.formIsValid(
+            email: email,
+            password: password,
+            confirmPassword: confirmPassword,
+            fullname: fullname
+        )
         VStack {
             Image("Bitcoin")
                 .resizable()
@@ -65,7 +72,7 @@ struct RegistrationView: View {
             
             Button {
                 Task {
-                    try await viewModel.createUser(withEmail: email,
+                    try await coordinator.createUser(withEmail: email,
                         password: password,
                         fullname: fullname)
                 }
@@ -100,19 +107,6 @@ struct RegistrationView: View {
     }
 }
 
-extension RegistrationView: AuthenticationForProtocol {
-    var formIsValid: Bool {
-        return !email.isEmpty
-        && email.contains("@")
-        && !password.isEmpty
-        && password.count > 5
-        && confirmPassword == password
-        && !fullname.isEmpty
-    }
-    
-    
-}
-
 #Preview {
-    RegistrationView()
+    RegistrationView(viewModel: RegistrationViewModel())
 }

@@ -10,9 +10,11 @@ import SwiftUI
 struct LoginView: View {
     @State private var email = ""
     @State private var password = ""
-    @EnvironmentObject var viewModel: AuthViewModel
+    @EnvironmentObject var coordinator: MainCoordinator
+    @ObservedObject var viewModel: LoginViewModel
     
     var body: some View {
+        let formIsValid = viewModel.formIsValid(email: email, password: password)
         NavigationStack {
             VStack {
                 
@@ -39,10 +41,10 @@ struct LoginView: View {
                 .padding(.horizontal)
                 .padding(.top, 12)
                 
-                //sign in button
+                // sign in button
                 Button {
                     Task {
-                        try await  viewModel.signIn(withEmail: email, password: password)
+                        try await  coordinator.signIn(withEmail: email, password: password)
                     }
                 } label: {
                     HStack {
@@ -63,7 +65,7 @@ struct LoginView: View {
                 
                 //sign up button
                 NavigationLink {
-                    RegistrationView()
+                    coordinator.build(screen: .registration)
                         .navigationBarBackButtonHidden(true)
                 } label: {
                     HStack(spacing: 3) {
@@ -78,17 +80,6 @@ struct LoginView: View {
     }
 }
 
-extension LoginView: AuthenticationForProtocol {
-    var formIsValid: Bool {
-        return !email.isEmpty
-        && email.contains("@")
-        && !password.isEmpty
-        && password.count > 5
-    }
-    
-    
-}
-
 #Preview {
-    LoginView()
+    LoginView(viewModel: LoginViewModel())
 }

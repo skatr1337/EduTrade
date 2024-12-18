@@ -8,10 +8,10 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @EnvironmentObject var viewModel: AuthViewModel
+    @EnvironmentObject var coordinator: MainCoordinator
 
     var body: some View {
-        if let user = viewModel.currentUser {
+        if let user = coordinator.currentUser {
             List {
                 Section {
                     HStack{
@@ -38,7 +38,7 @@ struct SettingsView: View {
                 
                 Section("Account") {
                     Button {
-                        viewModel.signOut()
+                        coordinator.signOut()
                     } label: {
                         SettingsRowView(imageName: "arrow.left.circle.fill", title: "Sign out", tintColor: .red)
                     }

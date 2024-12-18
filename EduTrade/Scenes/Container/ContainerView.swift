@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  ContainerView.swift
 //  EduTrade
 //
 //  Created by Filip Biegaj on 13/11/2024.
@@ -7,26 +7,27 @@
 
 import SwiftUI
 
-struct MainView: View {
+struct ContainerView: View {
     @State private var selectedIndex: Int = 0
+    @EnvironmentObject var coordinator: MainCoordinator
 
     var body: some View {
         TabView (selection: $selectedIndex) {
-            HomeView(viewModel: HomeViewModel())
+            coordinator.build(screen: .home)
                 .tabItem {
                     Image(systemName: "house")
                     Text("Home")
                 }
-            TradeView()
+            coordinator.build(screen: .trade)
                 .tabItem {
                     Image(systemName: "bitcoinsign.circle.fill")
                     Text("Trade")
                 }
-            SettingsView()
-            .tabItem {
-                Image(systemName: "person")
-                Text("Profile")
-            }
+            coordinator.build(screen: .settings)
+                .tabItem {
+                    Image(systemName: "person")
+                    Text("Profile")
+                }
         }
         .onAppear(perform: {
             UITabBar.appearance().unselectedItemTintColor = .systemGray
@@ -36,5 +37,6 @@ struct MainView: View {
 }
 
 #Preview {
-   MainView()
+    ContainerView()
+        .environmentObject(MainCoordinator())
 }

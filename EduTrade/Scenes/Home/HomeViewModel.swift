@@ -13,14 +13,23 @@ struct Coin: Identifiable {
 }
 
 class HomeViewModel: ObservableObject {
-    let requests = Requests()
+    let cryptoService: CryptoServiceProtocol
+    let accountService: AccountServiceProtocol
+
+    init(
+        cryptoService: CryptoServiceProtocol,
+        accountService: AccountServiceProtocol
+    ) {
+        self.cryptoService = cryptoService
+        self.accountService = accountService
+    }
     
     @MainActor @Published
     var coins: [Coin] = []
 
     @MainActor
     func refresh() async {
-        guard let receivedCoins = try? await requests.fetchCryptoCurrencies() else {
+        guard let receivedCoins = try? await cryptoService.fetchCryptoCurrencies() else {
             coins = []
             return
         }
