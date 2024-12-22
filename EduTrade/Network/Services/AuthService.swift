@@ -5,7 +5,6 @@
 //  Created by Filip Biegaj on 12.12.2024.
 //
 
-import Firebase
 import FirebaseAuth
 import FirebaseFirestore
 
@@ -26,7 +25,6 @@ class AuthService: AuthServiceProtocol, ObservableObject {
     @Published var currentUser: UserDTO?
 
     init() {
-        FirebaseApp.configure()
         self.auth = Auth.auth()
         self.usersCollection = Firestore.firestore().collection("users")
         self.userSession = Auth.auth().currentUser

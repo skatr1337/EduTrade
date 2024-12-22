@@ -8,12 +8,14 @@ import SwiftUI
 
 struct HomeView: View {
     @ObservedObject var viewModel: HomeViewModel
-
+    
     var body: some View {
-        ZStack {
-            Color.gray.opacity(0.1)
-                .ignoresSafeArea()
-            contentView
+        ZStack{
+            Color.gray.opacity(0.1).ignoresSafeArea()
+            VStack {
+                header
+                coins
+            }
         }
         .task {
             await viewModel.refresh()
@@ -24,21 +26,30 @@ struct HomeView: View {
     }
 
     @ViewBuilder
-    private var contentView: some View {
+    private var header: some View {
+        VStack {
+            Text("Live prices")
+                .font(.headline)
+                .fontWeight(.heavy)
+        }
+    }
+
+    @ViewBuilder
+    private var coins: some View {
         List(viewModel.coins) { coin in
             HStack {
-                Text(coin.name)
-                Spacer()
-                Text(coin.current_price.formatted())
+                CoinRowView(coin: coin)
             }
         }
+        .listStyle(PlainListStyle())
     }
 }
 
 #Preview {
-    HomeView(
+    return HomeView(
         viewModel: HomeViewModel(
-            cryptoService: CryptoService(), accountService: AccountService(uid: "")
+            cryptoService: CryptoService(),
+            accountService: AccountService(uid: "")
         )
     )
 }

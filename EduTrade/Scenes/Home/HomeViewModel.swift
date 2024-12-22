@@ -8,8 +8,12 @@ import Foundation
 
 struct Coin: Identifiable {
     let id = UUID()
-    let name: String
-    let current_price: Double
+    let rank: Int
+    let symbol: String
+    let image: URL
+    let currentPrice: Double
+    let priceChangePercentage: Double
+    let isPriceChangePosive: Bool
 }
 
 class HomeViewModel: ObservableObject {
@@ -19,6 +23,7 @@ class HomeViewModel: ObservableObject {
     init(
         cryptoService: CryptoServiceProtocol,
         accountService: AccountServiceProtocol
+
     ) {
         self.cryptoService = cryptoService
         self.accountService = accountService
