@@ -23,7 +23,6 @@ class HomeViewModel: ObservableObject {
     init(
         cryptoService: CryptoServiceProtocol,
         accountService: AccountServiceProtocol
-
     ) {
         self.cryptoService = cryptoService
         self.accountService = accountService

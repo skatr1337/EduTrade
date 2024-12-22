@@ -12,8 +12,30 @@ enum Screen: Hashable {
     case login
     case registration
     case home
-    case trade
+    case trade(coin: Coin)
+    case wallet
     case settings
+}
+
+extension Screen {
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        switch (lhs, rhs) {
+        case (.container, .container),
+            (.login, .login),
+            (.registration, .registration),
+            (.home, .home),
+            (.trade, .trade),
+            (.wallet, .wallet),
+            (.settings, .settings):
+            true
+        default:
+            false
+        }
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(self)
+    }
 }
 
 @MainActor
@@ -23,6 +45,8 @@ class MainCoordinator: ObservableObject {
     private let cryptoService: CryptoServiceProtocol
     @Published var isLoading = false
     @Published var currentUser: UserDTO?
+    @Published var path: NavigationPath = NavigationPath()
+    var viewModel: HomeViewModel?
 
     init(
         authService: AuthServiceProtocol = AuthService(),
@@ -45,6 +69,18 @@ class MainCoordinator: ObservableObject {
 // MARK: Navigation
 
 extension MainCoordinator {
+    func push(screen: Screen) {
+        path.append(screen)
+    }
+
+    func pop() {
+        path.removeLast()
+    }
+    
+    func popToRoot() {
+        path.removeLast(path.count)
+    }
+
     @ViewBuilder
     func build(screen: Screen) -> some View {
         switch screen {
@@ -57,15 +93,13 @@ extension MainCoordinator {
             let viewModel = RegistrationViewModel()
             RegistrationView(viewModel: viewModel)
         case .home:
-            if let accountService {
-                let viewModel = HomeViewModel(
-                    cryptoService: cryptoService,
-                    accountService: accountService
-                )
+            if let viewModel {
                 HomeView(viewModel: viewModel)
             }
-        case .trade:
-            TradeView()
+        case let .trade(coin):
+            TradeView(coin: coin)
+        case .wallet:
+            WalletView()
         case .settings:
             SettingsView()
         }
@@ -103,6 +137,12 @@ extension MainCoordinator {
             return
         }
         accountService = AccountService(uid: uid)
+        if let accountService {
+            viewModel = HomeViewModel(
+                cryptoService: cryptoService,
+                accountService: accountService
+            )
+        }
     }
 }
 

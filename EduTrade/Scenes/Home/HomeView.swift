@@ -7,6 +7,7 @@
 import SwiftUI
 
 struct HomeView: View {
+    @EnvironmentObject var coordinator: MainCoordinator
     @ObservedObject var viewModel: HomeViewModel
     
     var body: some View {
@@ -37,7 +38,11 @@ struct HomeView: View {
     @ViewBuilder
     private var coins: some View {
         List(viewModel.coins) { coin in
-            HStack {
+            Button {
+                Task {
+                    coordinator.push(screen: .trade(coin: coin))
+                }
+            } label: {
                 CoinRowView(coin: coin)
             }
         }

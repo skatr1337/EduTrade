@@ -13,15 +13,15 @@ struct ContainerView: View {
 
     var body: some View {
         TabView (selection: $selectedIndex) {
-            coordinator.build(screen: .home)
+            homeView
                 .tabItem {
                     Image(systemName: "house")
                     Text("Home")
                 }
-            coordinator.build(screen: .trade)
+            coordinator.build(screen: .wallet)
                 .tabItem {
                     Image(systemName: "bitcoinsign.circle.fill")
-                    Text("Trade")
+                    Text("Wallet")
                 }
             coordinator.build(screen: .settings)
                 .tabItem {
@@ -33,6 +33,18 @@ struct ContainerView: View {
             UITabBar.appearance().unselectedItemTintColor = .systemGray
             UITabBar.appearance().backgroundColor = .systemGray4.withAlphaComponent(0.4)
         })
+    }
+
+    @ViewBuilder
+    private var homeView: some View {
+        NavigationStack(
+            path: $coordinator.path
+        ) {
+            coordinator.build(screen: .home)
+                .navigationDestination(for: Screen.self) { screen in
+                    coordinator.build(screen: screen)
+                }
+        }
     }
 }
 
