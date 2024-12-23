@@ -18,16 +18,19 @@ struct ContainerView: View {
                     Image(systemName: "house")
                     Text("Home")
                 }
+                .tag(0)
             coordinator.build(screen: .wallet)
                 .tabItem {
                     Image(systemName: "bitcoinsign.circle.fill")
                     Text("Wallet")
                 }
+                .tag(1)
             coordinator.build(screen: .settings)
                 .tabItem {
                     Image(systemName: "person")
                     Text("Profile")
                 }
+                .tag(2)
         }
         .onAppear(perform: {
             UITabBar.appearance().unselectedItemTintColor = .systemGray

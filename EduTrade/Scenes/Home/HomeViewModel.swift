@@ -37,7 +37,23 @@ class HomeViewModel: ObservableObject {
             coins = []
             return
         }
-        coins = receivedCoins.toCoins()
+        coins = makeCoins(coinMarkets: receivedCoins)
+    }
+
+    private func makeCoins(coinMarkets: [CoinMarketsDTO]) -> [Coin] {
+        coinMarkets.compactMap { makeCoin(coinMarket: $0) }
+    }
+
+    private func makeCoin(coinMarket: CoinMarketsDTO) -> Coin? {
+        guard let image = URL(string: coinMarket.image) else { return nil }
+        return Coin(
+            rank: coinMarket.market_cap_rank,
+            symbol: coinMarket.symbol,
+            image: image,
+            currentPrice: coinMarket.current_price,
+            priceChangePercentage: coinMarket.price_change_percentage_24h,
+            isPriceChangePosive: coinMarket.price_change_percentage_24h >= 0
+        )
     }
 }
 

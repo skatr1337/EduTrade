@@ -43,10 +43,14 @@ class MainCoordinator: ObservableObject {
     private let authService: AuthServiceProtocol
     private var accountService: AccountServiceProtocol?
     private let cryptoService: CryptoServiceProtocol
+    private var homeViewModel: HomeViewModel?
+    private let loginViewModel = LoginViewModel()
+    private let registrationViewModel = RegistrationViewModel()
+    private var walletViewModel: WalletViewModel?
+
     @Published var isLoading = false
     @Published var currentUser: UserDTO?
     @Published var path: NavigationPath = NavigationPath()
-    var viewModel: HomeViewModel?
 
     init(
         authService: AuthServiceProtocol = AuthService(),
@@ -87,19 +91,19 @@ extension MainCoordinator {
         case .container:
             ContainerView()
         case .login:
-            let viewModel = LoginViewModel()
-            LoginView(viewModel: viewModel)
+            LoginView(viewModel: loginViewModel)
         case .registration:
-            let viewModel = RegistrationViewModel()
-            RegistrationView(viewModel: viewModel)
+            RegistrationView(viewModel: registrationViewModel)
         case .home:
-            if let viewModel {
-                HomeView(viewModel: viewModel)
+            if let homeViewModel {
+                HomeView(viewModel: homeViewModel)
             }
         case let .trade(coin):
             TradeView(coin: coin)
         case .wallet:
-            WalletView()
+            if let walletViewModel {
+                WalletView(viewModel: walletViewModel)
+            }
         case .settings:
             SettingsView()
         }
@@ -138,7 +142,11 @@ extension MainCoordinator {
         }
         accountService = AccountService(uid: uid)
         if let accountService {
-            viewModel = HomeViewModel(
+            homeViewModel = HomeViewModel(
+                cryptoService: cryptoService,
+                accountService: accountService
+            )
+            walletViewModel = WalletViewModel(
                 cryptoService: cryptoService,
                 accountService: accountService
             )
