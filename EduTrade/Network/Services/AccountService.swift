@@ -11,11 +11,15 @@ protocol AccountServiceProtocol {
     func updateInitialCryptos() async throws
     func updateCryptos(cryptos: Set<AccountDTO.CryptoDTO>) async throws
     func getAccount() async throws -> AccountDTO?
+    func getDefaultCoin() async -> AccountDTO.CryptoDTO?
+    func getCoin(id: String) async -> AccountDTO.CryptoDTO?
 }
 
 class AccountService: AccountServiceProtocol {
     private let uid: String
     private let accountsCollection: CollectionReference
+    private var defaultCoinId = "tether"
+    private var currentAccount: AccountDTO?
 
     init(uid: String) {
         self.uid = uid
@@ -25,7 +29,7 @@ class AccountService: AccountServiceProtocol {
     func updateInitialCryptos() async throws {
         let cryptos: Set<AccountDTO.CryptoDTO> = [
             AccountDTO.CryptoDTO(
-                id: "tether",
+                id: defaultCoinId,
                 symbol: "usdt",
                 amount: 1000
             )
@@ -51,9 +55,24 @@ class AccountService: AccountServiceProtocol {
         }
         
         let account = try? snapshot.data(as: AccountDTO.self)
+        currentAccount = account
         return account
     }
 
+    func getCoin(id: String) async -> AccountDTO.CryptoDTO? {
+        var current: AccountDTO?
+        if let currentAccount {
+            current = currentAccount
+        } else {
+            current = await getAccount()
+        }
+        return current?.cryptos.first { $0.id == id }
+    }
+
+    func getDefaultCoin() async -> AccountDTO.CryptoDTO? {
+        await getAccount()?.cryptos.first { $0.id == defaultCoinId }
+    }
+    
     private func snapshot() async throws -> DocumentSnapshot? {
         try await accountsCollection.document(uid).getDocument()
     }

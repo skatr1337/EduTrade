@@ -32,7 +32,7 @@ class WalletViewModel: ObservableObject {
     @MainActor
     func getAccount() async {
         guard
-            let receivedCoins = try? await cryptoService.fetchCryptoCurrencies(),
+            let receivedCoins = try? await cryptoService.fetchList(),
             let recivedAccount = try? await accountService.getAccount()
         else {
             walletCoins = []
@@ -49,7 +49,7 @@ class WalletViewModel: ObservableObject {
 
         account.cryptos.forEach {
             guard
-                let value = getCurrentPrice(id: $0.id, coins: coins),
+                let price = getCurrentPrice(id: $0.id, coins: coins),
                 let url = getImage(id: $0.id, coins: coins)
             else {
                 return
@@ -59,7 +59,7 @@ class WalletViewModel: ObservableObject {
                     symbol: $0.symbol,
                     image: url,
                     amount: $0.amount,
-                    value: value
+                    value: $0.amount * price
                 )
             )
         }

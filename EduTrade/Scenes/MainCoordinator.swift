@@ -47,6 +47,7 @@ class MainCoordinator: ObservableObject {
     private let loginViewModel = LoginViewModel()
     private let registrationViewModel = RegistrationViewModel()
     private var walletViewModel: WalletViewModel?
+    private var tradeViewModel: TradeViewModel?
 
     @Published var isLoading = false
     @Published var currentUser: UserDTO?
@@ -99,7 +100,9 @@ extension MainCoordinator {
                 HomeView(viewModel: homeViewModel)
             }
         case let .trade(coin):
-            TradeView(coin: coin)
+            if let tradeViewModel {
+                TradeView(viewModel: tradeViewModel, coin: coin)
+            }
         case .wallet:
             if let walletViewModel {
                 WalletView(viewModel: walletViewModel)
@@ -147,6 +150,10 @@ extension MainCoordinator {
                 accountService: accountService
             )
             walletViewModel = WalletViewModel(
+                cryptoService: cryptoService,
+                accountService: accountService
+            )
+            tradeViewModel = TradeViewModel(
                 cryptoService: cryptoService,
                 accountService: accountService
             )

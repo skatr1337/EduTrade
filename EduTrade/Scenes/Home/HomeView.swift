@@ -11,7 +11,7 @@ struct HomeView: View {
     @ObservedObject var viewModel: HomeViewModel
     
     var body: some View {
-        ZStack{
+        ZStack {
             Color.gray.opacity(0.1).ignoresSafeArea()
             VStack {
                 header
@@ -54,7 +54,9 @@ struct HomeView: View {
     return HomeView(
         viewModel: HomeViewModel(
             cryptoService: CryptoService(),
-            accountService: AccountService(uid: "")
+            accountService: AccountService(
+                uid: "C1CzQbWAdqR2obB2Nh9Cu9ACvof2"
+            )
         )
     )
 }

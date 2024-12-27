@@ -6,11 +6,26 @@
 //
 
 protocol CryptoServiceProtocol {
-    func fetchCryptoCurrencies() async throws -> [CoinMarketsDTO]
+    func fetchList() async throws -> [CoinMarketsDTO]
+    func fetchCoin(id: String) async throws -> CoinMarketsDTO
 }
 
 class CryptoService: CryptoServiceProtocol {
-    func fetchCryptoCurrencies() async throws -> [CoinMarketsDTO] {
-        try await Endpoints.fetchCrypto.fetch()
+    func fetchList() async throws -> [CoinMarketsDTO] {
+        try await Endpoints.fetchList.fetch()
+    }
+    
+    func fetchCoin(id: String) async throws -> CoinMarketsDTO {
+        let coins: [CoinMarketsDTO] = try await Endpoints.fetchCoin(id: id).fetch()
+        if let coin = coins.first {
+            return coin
+        }
+        throw error.notFound
+    }
+}
+
+extension CryptoService {
+    enum error: Error {
+        case notFound
     }
 }

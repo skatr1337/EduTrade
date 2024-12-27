@@ -56,6 +56,7 @@ struct CoinRowView: View {
 
     return CoinRowView(
         coin: Coin(
+            id: "bitcoin",
             rank: 1,
             symbol: "btc",
             image: image,

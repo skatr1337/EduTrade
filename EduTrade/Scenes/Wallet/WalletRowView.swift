@@ -37,9 +37,14 @@ struct WalletRowView: View {
     
     @ViewBuilder
     private var amount: some View {
-        Text("\(walletCoin.amount)")
-            .font(.headline)
-            .padding(.trailing, 6)
+        VStack(alignment: .trailing) {
+            Text("\(walletCoin.amount)")
+                .font(.headline)
+                .padding(.trailing, 6)
+            Text(walletCoin.value.asCurrencyWith2Decimals())
+                .font(.headline)
+                .padding(.trailing, 6)
+        }
     }
 }
 #Preview {

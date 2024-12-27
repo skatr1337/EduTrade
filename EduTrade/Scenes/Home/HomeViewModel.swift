@@ -7,7 +7,7 @@
 import Foundation
 
 struct Coin: Identifiable {
-    let id = UUID()
+    let id: String
     let rank: Int
     let symbol: String
     let image: URL
@@ -33,7 +33,7 @@ class HomeViewModel: ObservableObject {
 
     @MainActor
     func refresh() async {
-        guard let receivedCoins = try? await cryptoService.fetchCryptoCurrencies() else {
+        guard let receivedCoins = try? await cryptoService.fetchList() else {
             coins = []
             return
         }
@@ -47,6 +47,7 @@ class HomeViewModel: ObservableObject {
     private func makeCoin(coinMarket: CoinMarketsDTO) -> Coin? {
         guard let image = URL(string: coinMarket.image) else { return nil }
         return Coin(
+            id: coinMarket.id,
             rank: coinMarket.market_cap_rank,
             symbol: coinMarket.symbol,
             image: image,
