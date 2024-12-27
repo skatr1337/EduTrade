@@ -4,26 +4,31 @@
 //
 //  Created by Filip Biegaj on 23/12/2024.
 //
-import Foundation
+import SwiftUI
 
 struct WalletCoin: Identifiable {
     let id = UUID()
     let symbol: String
-    let image: URL
+    let image: SymbolImage
     let amount: Double
     let value: Double
+
+    enum SymbolImage {
+        case imegeUrl(URL)
+        case image(Image)
+    }
 }
 
 class WalletViewModel: ObservableObject {
     let cryptoService: CryptoServiceProtocol
-    let accountService: AccountServiceProtocol
+    let walletService: WalletServiceProtocol
     
     init(
         cryptoService: CryptoServiceProtocol,
-        accountService: AccountServiceProtocol
+        walletService: WalletServiceProtocol
     ) {
         self.cryptoService = cryptoService
-        self.accountService = accountService
+        self.walletService = walletService
     }
     
     @MainActor @Published
@@ -33,7 +38,7 @@ class WalletViewModel: ObservableObject {
     func getAccount() async {
         guard
             let receivedCoins = try? await cryptoService.fetchList(),
-            let recivedAccount = try? await accountService.getAccount()
+            let recivedAccount = try? await walletService.getAccount()
         else {
             walletCoins = []
             return
@@ -48,6 +53,10 @@ class WalletViewModel: ObservableObject {
         var results: [WalletCoin] = []
 
         account.cryptos.forEach {
+            if walletService.defaultCoinId == $0.id {
+                results.append(creteateDefautlCoin(crypto: $0))
+                return
+            }
             guard
                 let price = getCurrentPrice(id: $0.id, coins: coins),
                 let url = getImage(id: $0.id, coins: coins)
@@ -57,7 +66,7 @@ class WalletViewModel: ObservableObject {
             results.append(
                 WalletCoin(
                     symbol: $0.symbol,
-                    image: url,
+                    image: .imegeUrl(url),
                     amount: $0.amount,
                     value: $0.amount * price
                 )
@@ -66,8 +75,17 @@ class WalletViewModel: ObservableObject {
         return results
     }
 
+    private func creteateDefautlCoin(crypto: AccountDTO.CryptoDTO) -> WalletCoin {
+        WalletCoin(
+            symbol: crypto.id,
+            image: .image(Image(systemName: "dollarsign")),
+            amount: crypto.amount,
+            value: crypto.amount
+        )
+    }
+    
     func getCurrentPrice(id: String, coins: [CoinMarketsDTO]) -> Double? {
-        coins.first { $0.id == id }?.current_price
+        return coins.first { $0.id == id }?.current_price
     }
 
     func getImage(id: String, coins: [CoinMarketsDTO]) -> URL? {

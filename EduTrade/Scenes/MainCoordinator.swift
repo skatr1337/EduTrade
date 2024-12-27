@@ -41,7 +41,7 @@ extension Screen {
 @MainActor
 class MainCoordinator: ObservableObject {
     private let authService: AuthServiceProtocol
-    private var accountService: AccountServiceProtocol?
+    private var walletService: WalletServiceProtocol?
     private let cryptoService: CryptoServiceProtocol
     private var homeViewModel: HomeViewModel?
     private let loginViewModel = LoginViewModel()
@@ -124,7 +124,7 @@ extension MainCoordinator {
     func createUser(withEmail email: String, password: String, fullname: String) async throws {
         try await authService.createUser(email: email, password: password, fullname: fullname)
         updateCurrentUser()
-        try await accountService?.updateInitialCryptos()
+        try await walletService?.updateInitialCryptos()
     }
 
     func signOut() {
@@ -140,22 +140,22 @@ extension MainCoordinator {
     private func updateCurrentUser() {
         currentUser = authService.currentUser
         guard let uid = currentUser?.id else {
-            accountService = nil
+            walletService = nil
             return
         }
-        accountService = AccountService(uid: uid)
-        if let accountService {
+        walletService = WalletService(uid: uid)
+        if let walletService {
             homeViewModel = HomeViewModel(
                 cryptoService: cryptoService,
-                accountService: accountService
+                walletService: walletService
             )
             walletViewModel = WalletViewModel(
                 cryptoService: cryptoService,
-                accountService: accountService
+                walletService: walletService
             )
             tradeViewModel = TradeViewModel(
                 cryptoService: cryptoService,
-                accountService: accountService
+                walletService: walletService
             )
         }
     }
@@ -165,10 +165,10 @@ extension MainCoordinator {
 
 extension MainCoordinator {
     func updateCryptos(cryptos: Set<AccountDTO.CryptoDTO>) async throws {
-        try await accountService?.updateCryptos(cryptos: cryptos)
+        try await walletService?.updateCryptos(cryptos: cryptos)
     }
 
     func getAccount() async throws -> AccountDTO? {
-        try await accountService?.getAccount()
+        try await walletService?.getAccount()
     }
 }

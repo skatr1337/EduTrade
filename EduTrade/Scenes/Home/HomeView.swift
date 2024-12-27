@@ -54,7 +54,7 @@ struct HomeView: View {
     return HomeView(
         viewModel: HomeViewModel(
             cryptoService: CryptoService(),
-            accountService: AccountService(
+            walletService: WalletService(
                 uid: "C1CzQbWAdqR2obB2Nh9Cu9ACvof2"
             )
         )

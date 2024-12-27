@@ -18,14 +18,14 @@ struct Coin: Identifiable {
 
 class HomeViewModel: ObservableObject {
     let cryptoService: CryptoServiceProtocol
-    let accountService: AccountServiceProtocol
+    let walletService: WalletServiceProtocol
 
     init(
         cryptoService: CryptoServiceProtocol,
-        accountService: AccountServiceProtocol
+        walletService: WalletServiceProtocol
     ) {
         self.cryptoService = cryptoService
-        self.accountService = accountService
+        self.walletService = walletService
     }
     
     @MainActor @Published

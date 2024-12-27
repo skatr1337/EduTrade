@@ -20,16 +20,23 @@ struct WalletRowView: View {
     
     @ViewBuilder
     private var crypto: some View {
-        AsyncImageCached(url: walletCoin.image) { phase in
-            if let image = phase.image {
-                image.resizable()
-            } else if phase.error != nil {
-                EmptyView()
-            } else {
-                ProgressView()
+        switch walletCoin.image {
+            case let .image(image):
+            image.resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 30, height: 30)
+            case let .imegeUrl(url):
+            AsyncImageCached(url: url) { phase in
+                if let image = phase.image {
+                    image.resizable()
+                } else if phase.error != nil {
+                    EmptyView()
+                } else {
+                    ProgressView()
+                }
             }
-        }
             .frame(width: 30, height: 30)
+        }
         Text(walletCoin.symbol.uppercased())
             .font(.headline)
             .padding(.leading, 6)
@@ -49,13 +56,13 @@ struct WalletRowView: View {
 }
 #Preview {
     let imageString = "https://assets.coingecko.com/coins/images/1/large/bitcoin.png?1547033579"
-    guard let image = URL(string: imageString) else { return EmptyView()
+    guard let url = URL(string: imageString) else { return EmptyView()
     }
     
     return WalletRowView(
         walletCoin: WalletCoin(
             symbol: "usdt",
-            image: image,
+            image: .imegeUrl(url),
             amount: 1000,
             value: 1000
         )

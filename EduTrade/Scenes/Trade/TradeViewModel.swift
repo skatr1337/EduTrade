@@ -9,7 +9,7 @@ import SwiftUI
 
 class TradeViewModel: ObservableObject {
     private let cryptoService: CryptoServiceProtocol
-    private let accountService: AccountServiceProtocol
+    private let walletService: WalletServiceProtocol
     private var destinationCoin: CoinMarketsDTO?
     
     @MainActor @Published
@@ -24,16 +24,16 @@ class TradeViewModel: ObservableObject {
 
     init(
         cryptoService: CryptoServiceProtocol,
-        accountService: AccountServiceProtocol
+        walletService: WalletServiceProtocol
     ) {
         self.cryptoService = cryptoService
-        self.accountService = accountService
+        self.walletService = walletService
     }
 
     @MainActor
     func getCoin(id: String) async {
         destinationCoin = try? await cryptoService.fetchCoin(id: id)
-        sourceCoin = await accountService.getDefaultCoin()
+        sourceCoin = await walletService.getDefaultCoin()
         maxValue = sourceCoin?.amount ?? 0
     }
 }

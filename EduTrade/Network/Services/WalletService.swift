@@ -1,5 +1,5 @@
 //
-//  AccountService.swift
+//  WalletService.swift
 //  EduTrade
 //
 //  Created by Filip Biegaj on 14.12.2024.
@@ -7,7 +7,8 @@
 
 import FirebaseFirestore
 
-protocol AccountServiceProtocol {
+protocol WalletServiceProtocol {
+    var defaultCoinId: String { get }
     func updateInitialCryptos() async throws
     func updateCryptos(cryptos: Set<AccountDTO.CryptoDTO>) async throws
     func getAccount() async throws -> AccountDTO?
@@ -15,11 +16,12 @@ protocol AccountServiceProtocol {
     func getCoin(id: String) async -> AccountDTO.CryptoDTO?
 }
 
-class AccountService: AccountServiceProtocol {
+class WalletService: WalletServiceProtocol {
     private let uid: String
     private let accountsCollection: CollectionReference
-    private var defaultCoinId = "tether"
     private var currentAccount: AccountDTO?
+
+    var defaultCoinId = "dollar"
 
     init(uid: String) {
         self.uid = uid
@@ -30,7 +32,7 @@ class AccountService: AccountServiceProtocol {
         let cryptos: Set<AccountDTO.CryptoDTO> = [
             AccountDTO.CryptoDTO(
                 id: defaultCoinId,
-                symbol: "usdt",
+                symbol: "usd",
                 amount: 1000
             )
         ]

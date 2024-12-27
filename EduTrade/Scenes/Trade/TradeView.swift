@@ -83,7 +83,7 @@ struct TradeView: View {
     return TradeView(
         viewModel: TradeViewModel(
             cryptoService: CryptoService(),
-            accountService: AccountService(
+            walletService: WalletService(
                 uid: "C1CzQbWAdqR2obB2Nh9Cu9ACvof2"
             )
         ),
