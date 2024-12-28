@@ -53,22 +53,22 @@ class WalletViewModel: ObservableObject {
         var results: [WalletCoin] = []
 
         account.cryptos.forEach {
-            if walletService.defaultCoinId == $0.id {
-                results.append(creteateDefautlCoin(crypto: $0))
+            if walletService.defaultCoinId == $0.key {
+                results.append(creteateDefautlCoin(crypto: $0.value))
                 return
             }
             guard
-                let price = getCurrentPrice(id: $0.id, coins: coins),
-                let url = getImage(id: $0.id, coins: coins)
+                let price = getCurrentPrice(id: $0.key, coins: coins),
+                let url = getImage(id: $0.key, coins: coins)
             else {
                 return
             }
             results.append(
                 WalletCoin(
-                    symbol: $0.symbol,
+                    symbol: $0.value.symbol,
                     image: .imegeUrl(url),
-                    amount: $0.amount,
-                    value: $0.amount * price
+                    amount: $0.value.amount,
+                    value: $0.value.amount * price
                 )
             )
         }

@@ -124,7 +124,7 @@ extension MainCoordinator {
     func createUser(withEmail email: String, password: String, fullname: String) async throws {
         try await authService.createUser(email: email, password: password, fullname: fullname)
         updateCurrentUser()
-        try await walletService?.updateInitialCryptos()
+        try await walletService?.makeInitialCryptos()
     }
 
     func signOut() {
@@ -164,10 +164,6 @@ extension MainCoordinator {
 // MARK: Account
 
 extension MainCoordinator {
-    func updateCryptos(cryptos: Set<AccountDTO.CryptoDTO>) async throws {
-        try await walletService?.updateCryptos(cryptos: cryptos)
-    }
-
     func getAccount() async throws -> AccountDTO? {
         try await walletService?.getAccount()
     }

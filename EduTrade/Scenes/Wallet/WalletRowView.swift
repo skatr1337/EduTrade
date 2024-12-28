@@ -24,7 +24,7 @@ struct WalletRowView: View {
             case let .image(image):
             image.resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(width: 30, height: 30)
+                .frame(width: 30, height: 20)
             case let .imegeUrl(url):
             AsyncImageCached(url: url) { phase in
                 if let image = phase.image {

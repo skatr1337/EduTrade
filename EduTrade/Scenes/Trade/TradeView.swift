@@ -82,14 +82,15 @@ struct TradeView: View {
     @ViewBuilder
     private var amountSlider: some View {
         Slider(
-            value: $viewModel.currentValue,
-            in: 0...viewModel.maxValue
+            value: $viewModel.currentValueSlider,
+            in: 0...viewModel.maxValueSlider
         )
 
         TextField (
             "0.000000",
             value: $viewModel.currentValue,
-            formatter: amountFormatter
+            format: .number
+//            formatter: amountFormatter
         )
         .keyboardType(.decimalPad)
         .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -97,15 +98,19 @@ struct TradeView: View {
         .font(Font.system(size: 20, design: .default))
         .padding()
         HStack {
-            Text(viewModel.destinationValue.as6Decimals())
-            Text("\(coin.symbol)")
+            if let symbol = viewModel.walletDestinationCoin?.symbol {
+                Text(viewModel.destinationValue.as6Decimals())
+                Text(symbol)
+            }
         }
     }
     
     @ViewBuilder
     private var tradeOptionButton: some View {
         Button {
-            
+            Task {
+                await viewModel.buy(id: coin.id)
+            }
         } label: {
             Text(viewModel.tradeOption.description(symbol: coin.symbol))
                 .foregroundColor(.white)
@@ -114,14 +119,19 @@ struct TradeView: View {
         }
         .buttonStyle(.borderedProminent)
         .tint(viewModel.tradeOption.color)
-        .disabled(viewModel.maxValue == 0)
+        .disabled(
+            viewModel.maxValue.isZero ||
+            viewModel.currentValue.isZero
+        )
     }
 
-    let amountFormatter: NumberFormatter = {
-        let formatter = NumberFormatter()
-        formatter.zeroSymbol = ""
-        return formatter
-    }()
+//    var amountFormatter: NumberFormatter {
+//        let formatter = NumberFormatter()
+//        formatter.zeroSymbol = ""
+//        formatter.maximum = NSNumber(value: viewModel.maxValue)
+//        formatter.locale = Locale()
+//        return formatter
+//    }
 }
 
 #Preview {

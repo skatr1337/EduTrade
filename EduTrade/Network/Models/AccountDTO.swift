@@ -8,20 +8,38 @@
 import Foundation
 
 struct AccountDTO: Codable {
-    var cryptos: [CryptoDTO]
-    var transactions: [TransactionDTO]?
+    var cryptos: [String: CryptoDTO]
+    var transactions: [TransactionDTO]
 
     struct CryptoDTO: Codable, Hashable {
         let id: String
         let symbol: String
-        let amount: Double
+        var amount: Double
     }
 
-    struct TransactionDTO: Codable {
+    enum TransactionDTO: Codable {
+        case payment(PaymentTransactionDTO)
+        case exchange(ExchangeTransactionDTO)
+    }
+    
+    struct PaymentTransactionDTO: Codable {
         let timeStamp: Date
-        let amount: Double
-        let sourceCoinId: String
+        let destinationAmount: Double
         let destinationCoinId: String
     }
-}
 
+    struct ExchangeTransactionDTO: Codable {
+        let timeStamp: Date
+        let sourceAmount: Double
+        let destinationAmount: Double
+        let sourceCoinId: String
+        let destinationCoinId: String
+        let price: Double
+        let operation: Operation
+    }
+
+    enum Operation: Codable {
+        case buy
+        case sell
+    }
+}
