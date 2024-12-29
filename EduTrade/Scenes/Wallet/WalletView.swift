@@ -41,6 +41,7 @@ struct WalletView: View {
             }
             Button {
                 Task {
+                    coordinator.presentFullScreenCover(.transations)
                 }
             } label: {
                 Image(systemName: "list.bullet.clipboard")

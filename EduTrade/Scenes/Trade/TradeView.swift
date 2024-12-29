@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct TradeView: View {
-    @EnvironmentObject var coordinator: MainCoordinator
     @ObservedObject var viewModel: TradeViewModel
     @State var inProgress = false
 

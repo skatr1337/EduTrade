@@ -13,7 +13,7 @@ struct ContainerView: View {
 
     var body: some View {
         TabView (selection: $selectedIndex) {
-            homeView
+            navigation(screen: .home)
                 .tabItem {
                     Image(systemName: "house")
                     Text("Home")
@@ -39,13 +39,14 @@ struct ContainerView: View {
     }
 
     @ViewBuilder
-    private var homeView: some View {
-        NavigationStack(
-            path: $coordinator.path
-        ) {
-            coordinator.build(screen: .home)
-                .navigationDestination(for: Screen.self) { screen in
-                    coordinator.build(screen: screen)
+    private func navigation(screen: Screen) -> some View {
+        NavigationStack(path: $coordinator.path) {
+            coordinator.build(screen: screen)
+                .navigationDestination(for: Screen.self) {
+                    coordinator.build(screen: $0)
+                }
+                .fullScreenCover(item: $coordinator.fullScreenCover) {
+                    coordinator.build(cover: $0)
                 }
         }
     }

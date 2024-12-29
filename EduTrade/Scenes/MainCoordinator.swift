@@ -17,6 +17,14 @@ enum Screen: Hashable {
     case settings
 }
 
+enum FullScreenCover: String, Identifiable {
+    case transations
+
+    var id: String {
+        self.rawValue
+    }
+}
+
 extension Screen {
     static func == (lhs: Self, rhs: Self) -> Bool {
         switch (lhs, rhs) {
@@ -48,10 +56,12 @@ class MainCoordinator: ObservableObject {
     private let registrationViewModel = RegistrationViewModel()
     private var walletViewModel: WalletViewModel?
     private var tradeViewModel: TradeViewModel?
+    private var transactionsViewModel: TransactionsViewModel?
 
     @Published var isLoading = false
     @Published var currentUser: UserDTO?
     @Published var path: NavigationPath = NavigationPath()
+    @Published var fullScreenCover: FullScreenCover?
 
     init(
         authService: AuthServiceProtocol = AuthService(),
@@ -86,6 +96,14 @@ extension MainCoordinator {
         path.removeLast(path.count)
     }
 
+    func presentFullScreenCover(_ cover: FullScreenCover) {
+        fullScreenCover = cover
+    }
+
+    func dismissFullScreenCover() {
+        fullScreenCover = nil
+    }
+
     @ViewBuilder
     func build(screen: Screen) -> some View {
         switch screen {
@@ -109,6 +127,16 @@ extension MainCoordinator {
             }
         case .settings:
             SettingsView()
+        }
+    }
+
+    @ViewBuilder
+    func build(cover: FullScreenCover) -> some View {
+        switch cover {
+        case .transations:
+            if let transactionsViewModel {
+                TransactionsView(viewModel: transactionsViewModel)
+            }
         }
     }
 }
@@ -144,20 +172,23 @@ extension MainCoordinator {
             return
         }
         walletService = WalletService(uid: uid)
-        if let walletService {
-            homeViewModel = HomeViewModel(
-                cryptoService: cryptoService,
-                walletService: walletService
-            )
-            walletViewModel = WalletViewModel(
-                cryptoService: cryptoService,
-                walletService: walletService
-            )
-            tradeViewModel = TradeViewModel(
-                cryptoService: cryptoService,
-                walletService: walletService
-            )
-        }
+        guard let walletService else { return }
+        
+        homeViewModel = HomeViewModel(
+            cryptoService: cryptoService,
+            walletService: walletService
+        )
+        walletViewModel = WalletViewModel(
+            cryptoService: cryptoService,
+            walletService: walletService
+        )
+        tradeViewModel = TradeViewModel(
+            cryptoService: cryptoService,
+            walletService: walletService
+        )
+        transactionsViewModel = TransactionsViewModel(
+            walletService: walletService
+        )
     }
 }
 
