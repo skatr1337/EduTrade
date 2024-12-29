@@ -23,6 +23,12 @@ class WalletViewModel: ObservableObject {
     let cryptoService: CryptoServiceProtocol
     let walletService: WalletServiceProtocol
     
+    @MainActor @Published
+    var walletCoins: [WalletCoin] = []
+    
+    @MainActor @Published
+    var totalValue: Double = 0
+    
     init(
         cryptoService: CryptoServiceProtocol,
         walletService: WalletServiceProtocol
@@ -30,13 +36,7 @@ class WalletViewModel: ObservableObject {
         self.cryptoService = cryptoService
         self.walletService = walletService
     }
-    
-    @MainActor @Published
-    var walletCoins: [WalletCoin] = []
-    
-    @MainActor @Published
-    var totalValue: Double = 0
-    
+
     @MainActor
     func getAccount() async {
         guard

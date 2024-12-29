@@ -19,9 +19,18 @@ struct TransactionsView: View {
         } label: {
            Image(systemName: "xmark")
         }
-            .frame(maxWidth: .infinity, alignment: .trailing)
-            .padding()
+        .frame(maxWidth: .infinity, alignment: .trailing)
+        .padding()
         Spacer()
+        List(viewModel.transactions) { transaction in TransactionsRowView(transaction: transaction)
+        }
+        
+        .task {
+            await viewModel.getTransactions()
+        }
+        .refreshable {
+            await viewModel.getTransactions()
+        }
     }
 }
 
