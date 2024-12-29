@@ -74,13 +74,15 @@ class WalletService: WalletServiceProtocol {
             var cryptos = currentAccount.cryptos
             
             if let sourceAmount = cryptos[operation.sourceCoin.id]?.amount {
-                cryptos[operation.sourceCoin.id]?.amount = sourceAmount - operation.sourceAmount
+                let total = sourceAmount - operation.sourceAmount
+                updateCryptos(cryptos: &cryptos, key: operation.sourceCoin.id, value: total)
             } else {
                 throw OperationError.sourceCoinNotFound
             }
             
             if let destinationAmount = cryptos[operation.destinationCoin.id]?.amount {
-                cryptos[operation.destinationCoin.id]?.amount = destinationAmount + operation.destinationAmount
+                let total = destinationAmount + operation.destinationAmount
+                updateCryptos(cryptos: &cryptos, key: operation.destinationCoin.id, value: total)
             } else {
                 cryptos[operation.destinationCoin.id] = AccountDTO.CryptoDTO(
                     id: operation.destinationCoin.id,
@@ -94,6 +96,18 @@ class WalletService: WalletServiceProtocol {
                 transactions: currentAccount.transactions + [transaction]
             )
             try await accountsCollection.document(uid).updateData(encodedAccount)
+        }
+    }
+
+    private func updateCryptos(
+        cryptos: inout [String : AccountDTO.CryptoDTO],
+        key: String,
+        value: Double
+    ) {
+        if value == 0 && key != defaultCoinId {
+            cryptos.removeValue(forKey: key)
+        } else {
+            cryptos[key]?.amount = value
         }
     }
     
@@ -153,6 +167,5 @@ extension WalletService {
 
     enum OperationError: Error {
         case sourceCoinNotFound
-        case destinationCoinNotFound
     }
 }

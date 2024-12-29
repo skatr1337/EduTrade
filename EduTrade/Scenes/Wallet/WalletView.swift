@@ -29,11 +29,26 @@ struct WalletView: View {
     
     @ViewBuilder
     private var header: some View {
-        VStack {
-            Text("Total value")
-                .font(.headline)
-                .fontWeight(.heavy)
+        ZStack {
+            VStack {
+                Text("Total value")
+                    .font(.headline)
+                    .fontWeight(.heavy)
+                Text(viewModel.totalValue.asCurrencyWith2Decimals())
+                    .font(.headline)
+                    .fontWeight(.heavy)
+                
+            }
+            Button {
+                Task {
+                }
+            } label: {
+                Image(systemName: "list.bullet.clipboard")
+            }
+            .frame(maxWidth: .infinity, alignment: .trailing)
+            .padding()
         }
+       
     }
     
     @ViewBuilder

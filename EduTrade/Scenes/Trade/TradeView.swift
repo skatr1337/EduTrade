@@ -10,13 +10,15 @@ import SwiftUI
 struct TradeView: View {
     @EnvironmentObject var coordinator: MainCoordinator
     @ObservedObject var viewModel: TradeViewModel
+    @State var inProgress = false
+
     let coin: Coin
 
     var body: some View {
         VStack {
             currentPrice
-            walletDestination
             walletSource
+            walletDestination
             tradeOptionPicker
             amountSlider
             tradeOptionButton
@@ -40,24 +42,22 @@ struct TradeView: View {
             .padding(.bottom)
         }
     }
-    
+
     @ViewBuilder
-    private var walletDestination: some View {
+    private var walletSource: some View {
         HStack {
-            if let coin = viewModel.walletDestinationCoin {
-                Text("\(coin.symbol):")
-                Text(coin.amount.as6Decimals())
+            if let coin = viewModel.walletSourceCoin {
+                Text("From \(coin.symbol.uppercased()): \(coin.amount.as6Decimals())")
                 Spacer()
             }
         }
     }
 
     @ViewBuilder
-    private var walletSource: some View {
+    private var walletDestination: some View {
         HStack {
-            if let coin = viewModel.walletSourceCoin {
-                Text("\(coin.symbol):")
-                Text(coin.amount.asCurrencyWith6Decimals())
+            if let coin = viewModel.walletDestinationCoin {
+                Text("To \(coin.symbol.uppercased()): \(coin.amount.as6Decimals())")
                 Spacer()
             }
         }
@@ -70,6 +70,7 @@ struct TradeView: View {
                 Text(String(describing: $0))
             }
         }
+        .disabled(inProgress)
         .pickerStyle(.segmented)
         .onChange(of: viewModel.tradeOption) { _, id in
             Task {
@@ -85,6 +86,7 @@ struct TradeView: View {
             value: $viewModel.currentValueSlider,
             in: 0...viewModel.maxValueSlider
         )
+        .disabled(inProgress)
 
         TextField (
             "0.000000",
@@ -92,36 +94,46 @@ struct TradeView: View {
             format: .number
 //            formatter: amountFormatter
         )
+        .disabled(inProgress)
         .keyboardType(.decimalPad)
         .textFieldStyle(RoundedBorderTextFieldStyle())
         .frame(maxWidth: 150)
         .font(Font.system(size: 20, design: .default))
         .padding()
         HStack {
-            if let symbol = viewModel.walletDestinationCoin?.symbol {
-                Text(viewModel.destinationValue.as6Decimals())
-                Text(symbol)
+            if let symbol = viewModel.walletDestinationCoin?.symbol.uppercased() {
+                Text("\(viewModel.destinationValue.as6Decimals()) \(symbol)")
             }
         }
     }
     
     @ViewBuilder
     private var tradeOptionButton: some View {
+        let color = inProgress ? .black : viewModel.tradeOption.color
         Button {
             Task {
+                inProgress = true
                 await viewModel.buy(id: coin.id)
+                inProgress = false
             }
         } label: {
-            Text(viewModel.tradeOption.description(symbol: coin.symbol))
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .frame(height: 30)
+            if inProgress {
+                ProgressView()
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 30)
+            } else {
+                Text(viewModel.tradeOption.description(symbol: coin.symbol.uppercased()))
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 30)
+            }
         }
         .buttonStyle(.borderedProminent)
-        .tint(viewModel.tradeOption.color)
+        .tint(color)
         .disabled(
             viewModel.maxValue.isZero ||
-            viewModel.currentValue.isZero
+            viewModel.currentValue.isZero ||
+            inProgress
         )
     }
 

@@ -34,6 +34,9 @@ class WalletViewModel: ObservableObject {
     @MainActor @Published
     var walletCoins: [WalletCoin] = []
     
+    @MainActor @Published
+    var totalValue: Double = 0
+    
     @MainActor
     func getAccount() async {
         guard
@@ -44,17 +47,19 @@ class WalletViewModel: ObservableObject {
             return
         }
         walletCoins = makeWalletCoins(account: recivedAccount, coins: receivedCoins)
+        totalValue = makeTotalValue()
     }
     
     private func makeWalletCoins(
         account: AccountDTO,
         coins: [CoinMarketsDTO]
     ) -> [WalletCoin] {
+        var defaultCoins: [WalletCoin] = []
         var results: [WalletCoin] = []
 
         account.cryptos.forEach {
             if walletService.defaultCoinId == $0.key {
-                results.append(creteateDefautlCoin(crypto: $0.value))
+                defaultCoins = [creteateDefautlCoin(crypto: $0.value)]
                 return
             }
             guard
@@ -72,7 +77,7 @@ class WalletViewModel: ObservableObject {
                 )
             )
         }
-        return results
+        return defaultCoins + results.sorted { $0.value > $1.value }
     }
 
     private func creteateDefautlCoin(crypto: AccountDTO.CryptoDTO) -> WalletCoin {
@@ -84,13 +89,18 @@ class WalletViewModel: ObservableObject {
         )
     }
     
-    func getCurrentPrice(id: String, coins: [CoinMarketsDTO]) -> Double? {
+    private func getCurrentPrice(id: String, coins: [CoinMarketsDTO]) -> Double? {
         return coins.first { $0.id == id }?.current_price
     }
 
-    func getImage(id: String, coins: [CoinMarketsDTO]) -> URL? {
+    private func getImage(id: String, coins: [CoinMarketsDTO]) -> URL? {
         let coin = coins.first { $0.id == id }
         guard let coin else { return nil }
         return URL(string: coin.image)
+    }
+
+    @MainActor
+    private func makeTotalValue() -> Double {
+        walletCoins.reduce(0) { $0 + $1.value }
     }
 }
