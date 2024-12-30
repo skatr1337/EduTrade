@@ -10,14 +10,13 @@ import SwiftUI
 struct SettingsRowView: View {
     let imageName: String
     let title: String
-    let tintColor: Color
     
     var body: some View {
         HStack(spacing: 12) {
             Image(systemName: imageName)
                 .imageScale(.small)
                 .font(.title)
-                .foregroundColor(tintColor)
+                .foregroundColor(.red)
             
             Text(title)
                 .font(.subheadline)
@@ -27,5 +26,5 @@ struct SettingsRowView: View {
 }
 
 #Preview {
-    SettingsRowView(imageName: "arrow.left.circle.fill", title: "Sign out", tintColor: .red)
+    SettingsRowView(imageName: "arrow.left.circle.fill", title: "Sign out")
 }

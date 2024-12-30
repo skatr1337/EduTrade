@@ -11,7 +11,7 @@ enum Screen: Hashable {
     case container
     case login
     case registration
-    case home
+    case markets
     case trade(coin: Coin)
     case wallet
     case settings
@@ -31,7 +31,7 @@ extension Screen {
         case (.container, .container),
             (.login, .login),
             (.registration, .registration),
-            (.home, .home),
+            (.markets, .markets),
             (.trade, .trade),
             (.wallet, .wallet),
             (.settings, .settings):
@@ -51,7 +51,7 @@ class MainCoordinator: ObservableObject {
     private let authService: AuthServiceProtocol
     private var walletService: WalletServiceProtocol?
     private let cryptoService: CryptoServiceProtocol
-    private var homeViewModel: HomeViewModel?
+    private var marketsViewModel: MarketsViewModel?
     private let loginViewModel = LoginViewModel()
     private let registrationViewModel = RegistrationViewModel()
     private var walletViewModel: WalletViewModel?
@@ -113,9 +113,9 @@ extension MainCoordinator {
             LoginView(viewModel: loginViewModel)
         case .registration:
             RegistrationView(viewModel: registrationViewModel)
-        case .home:
-            if let homeViewModel {
-                HomeView(viewModel: homeViewModel)
+        case .markets:
+            if let marketsViewModel {
+                MarketsView(viewModel: marketsViewModel)
             }
         case let .trade(coin):
             if let tradeViewModel {
@@ -174,7 +174,7 @@ extension MainCoordinator {
         walletService = WalletService(uid: uid)
         guard let walletService else { return }
         
-        homeViewModel = HomeViewModel(
+        marketsViewModel = MarketsViewModel(
             cryptoService: cryptoService,
             walletService: walletService
         )

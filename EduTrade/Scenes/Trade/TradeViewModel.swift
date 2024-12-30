@@ -138,6 +138,11 @@ class TradeViewModel: ObservableObject {
             print(error)
         }
     }
+    
+    @MainActor
+    func percentage(_ percentage: Double) {
+        currentValue = maxValue * percentage
+    }
 }
 
 extension TradeViewModel {

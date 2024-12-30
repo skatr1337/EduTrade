@@ -86,6 +86,21 @@ struct TradeView: View {
             in: 0...viewModel.maxValueSlider
         )
         .disabled(inProgress)
+        
+        HStack {
+            ForEach([0.25, 0.5, 0.75, 1.0], id: \.self) { percentage in
+                Button("\(Int(percentage * 100))%") {
+                    viewModel.percentage(percentage)
+                }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 30)
+                    .foregroundColor(Color.black)
+                    .background(Color.gray.opacity(0.2))
+                    .cornerRadius(8)
+                    .disabled(inProgress
+                )
+            }
+        }
 
         TextField (
             "0.000000",

@@ -1,14 +1,14 @@
 //
-//  HomeView.swift
+//  MarketsView.swift
 //  EduTrade
 //
 //  Created by Filip Biegaj on 28/11/2024.
 //
 import SwiftUI
 
-struct HomeView: View {
+struct MarketsView: View {
     @EnvironmentObject var coordinator: MainCoordinator
-    @ObservedObject var viewModel: HomeViewModel
+    @ObservedObject var viewModel: MarketsViewModel
     
     var body: some View {
         ZStack {
@@ -51,8 +51,8 @@ struct HomeView: View {
 }
 
 #Preview {
-    return HomeView(
-        viewModel: HomeViewModel(
+    return MarketsView(
+        viewModel: MarketsViewModel(
             cryptoService: CryptoService(),
             walletService: WalletService(
                 uid: "C1CzQbWAdqR2obB2Nh9Cu9ACvof2"

@@ -1,5 +1,5 @@
 //
-//  HomeViewModel.swift
+//  MarketsViewModel.swift
 //  EduTrade
 //
 //  Created by Filip Biegaj on 28/11/2024.
@@ -16,7 +16,7 @@ struct Coin: Identifiable {
     let isPriceChangePosive: Bool
 }
 
-class HomeViewModel: ObservableObject {
+class MarketsViewModel: ObservableObject {
     let cryptoService: CryptoServiceProtocol
     let walletService: WalletServiceProtocol
 

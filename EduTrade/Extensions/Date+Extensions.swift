@@ -8,11 +8,15 @@
 import Foundation
 
 extension Date {
-    var toString: String {
+    static let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.timeStyle = .short
         formatter.dateStyle = .short
         formatter.locale = Locale()
-        return formatter.string(from: self)
+        return formatter
+    }()
+
+    var toString: String {
+        Date.dateFormatter.string(from: self)
     }
 }

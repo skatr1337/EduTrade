@@ -13,15 +13,15 @@ struct ContainerView: View {
 
     var body: some View {
         TabView (selection: $selectedIndex) {
-            navigation(screen: .home)
+            navigation(screen: .markets)
                 .tabItem {
-                    Image(systemName: "house")
-                    Text("Home")
+                    Image(systemName: "chart.bar.xaxis")
+                    Text("Markets")
                 }
                 .tag(0)
             coordinator.build(screen: .wallet)
                 .tabItem {
-                    Image(systemName: "bitcoinsign.circle.fill")
+                    Image(systemName: "wallet.bifold.fill")
                     Text("Wallet")
                 }
                 .tag(1)
@@ -32,8 +32,9 @@ struct ContainerView: View {
                 }
                 .tag(2)
         }
+        .accentColor(.icon)
         .onAppear(perform: {
-            UITabBar.appearance().unselectedItemTintColor = .systemGray
+            UITabBar.appearance().unselectedItemTintColor = UIColor(.unselectedIcon)
             UITabBar.appearance().backgroundColor = .systemGray4.withAlphaComponent(0.4)
         })
     }
