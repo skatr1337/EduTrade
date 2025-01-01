@@ -28,13 +28,13 @@ struct LoginView: View {
                 // form fields
                 VStack(spacing: 24) {
                     InputView(text: $email,
-                              title: "Email Address",
+                              title: String(localized: "Email Address"),
                               placeholder: "name@example.com")
                     .autocapitalization(.none)
                     
                     InputView(text: $password,
-                              title: "Password",
-                              placeholder: "Enter your Password", isSecureField: true)
+                              title: String(localized: "Password"),
+                              placeholder: String(localized: "Enter your Password"), isSecureField: true)
                 
                 }
                 

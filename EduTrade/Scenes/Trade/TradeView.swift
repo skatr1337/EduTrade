@@ -66,7 +66,7 @@ struct TradeView: View {
     private var tradeOptionPicker: some View {
         Picker("", selection: $viewModel.tradeOption) {
             ForEach(TradeViewModel.TradeOption.allCases) {
-                Text(String(describing: $0))
+                Text($0.description)
             }
         }
         .disabled(inProgress)

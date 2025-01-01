@@ -155,12 +155,21 @@ extension TradeViewModel {
         func description(symbol: String) -> String {
             switch self {
             case .buy:
-                "Buy \(symbol)"
+                String(localized: "Buy \(symbol)")
             case .sell:
-                "Sell \(symbol)"
+                String(localized: "Sell \(symbol)")
             }
         }
 
+        var description: String {
+            switch self {
+            case .buy:
+                String(localized: "Buy")
+            case .sell:
+                String(localized: "Sell")
+            }
+        }
+        
         var color: Color {
             switch self {
             case .buy:

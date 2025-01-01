@@ -32,7 +32,6 @@ struct ContainerView: View {
                 }
                 .tag(2)
         }
-        .accentColor(.icon)
         .onAppear(perform: {
             UITabBar.appearance().unselectedItemTintColor = UIColor(.unselectedIcon)
             UITabBar.appearance().backgroundColor = .systemGray4.withAlphaComponent(0.4)

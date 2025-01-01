@@ -9,7 +9,6 @@ import SwiftUI
 import UIKit
 
 extension Color {
-    static let icon: Color = .primary
-    static let unselectedIcon: Color = .secondary // .systemGray
+    static let unselectedIcon: Color = .secondary
 }
 

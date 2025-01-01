@@ -40,12 +40,14 @@ struct SettingsView: View {
                     Button {
                         coordinator.signOut()
                     } label: {
-                        SettingsRowView(imageName: "arrow.left.circle.fill", title: "Sign out")
+                        SettingsRowView(imageName: "arrow.left.circle.fill", title: String(localized: "Sign out"))
                     }
                     Button {
                         print("Delete account")
                     } label: {
-                        SettingsRowView(imageName: "minus.circle.fill", title: "Delete account")
+                        SettingsRowView(imageName: "minus.circle.fill", title:
+                            String(localized:"Delete account")
+                        )
                     }
                 }
             }

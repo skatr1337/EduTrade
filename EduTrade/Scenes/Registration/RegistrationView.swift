@@ -32,22 +32,22 @@ struct RegistrationView: View {
             
             VStack(spacing: 24) {
                 InputView(text: $email,
-                          title: "Email Address",
+                          title: String(localized: "Email Address"),
                           placeholder: "name@example.com")
                 .autocapitalization(.none)
                 
                 InputView(text: $fullname,
-                          title: "Full Name",
-                          placeholder: "Enter your name")
+                          title: String(localized: "Full Name"),
+                          placeholder: String(localized: "Enter your name"))
                 
                 InputView(text: $password,
-                          title: "Password",
-                          placeholder: "Enter your Password", isSecureField: true)
+                          title: String(localized: "Password"),
+                          placeholder: String(localized: "Enter your Password"), isSecureField: true)
                 
                 ZStack(alignment: .trailing) {
                     InputView(text: $confirmPassword,
-                              title: "Confirm password",
-                              placeholder: "Confirm your Password", isSecureField: true)
+                              title: String(localized: "Confirm password"),
+                              placeholder: String(localized: "Confirm your Password"), isSecureField: true)
                     
                     if !password.isEmpty && !confirmPassword.isEmpty {
                         if password == confirmPassword {
