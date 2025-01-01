@@ -9,7 +9,7 @@ import SwiftUI
 
 struct RootView: View {
     @StateObject var coordinator = MainCoordinator()
-    
+
     var body: some View {
         Group {
             if coordinator.isLoading {

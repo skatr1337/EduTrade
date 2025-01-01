@@ -11,9 +11,9 @@ protocol WalletServiceProtocol {
     var defaultCoinId: String { get }
     func makeInitialCryptos() async throws
     func makeExchange(operation: WalletService.ExchangeOpetation) async throws
-    func getAccount() async throws -> AccountDTO?
-    func getDefaultCoin() async -> AccountDTO.CryptoDTO?
-    func getCoin(id: String) async -> AccountDTO.CryptoDTO?
+    func getAccount() async throws -> AccountDTO
+    func getDefaultCoin() async throws -> AccountDTO.CryptoDTO
+    func getCoin(id: String) async throws -> AccountDTO.CryptoDTO?
 }
 
 class WalletService: WalletServiceProtocol {
@@ -70,33 +70,32 @@ class WalletService: WalletServiceProtocol {
         operation: ExchangeOpetation,
         transaction: AccountDTO.TransactionDTO
     ) async throws {
-        if let currentAccount = await getAccount() {
-            var cryptos = currentAccount.cryptos
-            
-            if let sourceAmount = cryptos[operation.sourceCoin.id]?.amount {
-                let total = sourceAmount - operation.sourceAmount
-                updateCryptos(cryptos: &cryptos, key: operation.sourceCoin.id, value: total)
-            } else {
-                throw OperationError.sourceCoinNotFound
-            }
-            
-            if let destinationAmount = cryptos[operation.destinationCoin.id]?.amount {
-                let total = destinationAmount + operation.destinationAmount
-                updateCryptos(cryptos: &cryptos, key: operation.destinationCoin.id, value: total)
-            } else {
-                cryptos[operation.destinationCoin.id] = AccountDTO.CryptoDTO(
-                    id: operation.destinationCoin.id,
-                    symbol: operation.destinationCoin.symbol,
-                    amount: operation.destinationAmount
-                )
-            }
-
-            let encodedAccount = try makeAccount(
-                cryptos: cryptos,
-                transactions: currentAccount.transactions + [transaction]
-            )
-            try await accountsCollection.document(uid).updateData(encodedAccount)
+        let currentAccount = try await getAccount()
+        var cryptos = currentAccount.cryptos
+        
+        if let sourceAmount = cryptos[operation.sourceCoin.id]?.amount {
+            let total = sourceAmount - operation.sourceAmount
+            updateCryptos(cryptos: &cryptos, key: operation.sourceCoin.id, value: total)
+        } else {
+            throw WalletServiceError.coinNotFound
         }
+        
+        if let destinationAmount = cryptos[operation.destinationCoin.id]?.amount {
+            let total = destinationAmount + operation.destinationAmount
+            updateCryptos(cryptos: &cryptos, key: operation.destinationCoin.id, value: total)
+        } else {
+            cryptos[operation.destinationCoin.id] = AccountDTO.CryptoDTO(
+                id: operation.destinationCoin.id,
+                symbol: operation.destinationCoin.symbol,
+                amount: operation.destinationAmount
+            )
+        }
+
+        let encodedAccount = try makeAccount(
+            cryptos: cryptos,
+            transactions: currentAccount.transactions + [transaction]
+        )
+        try await accountsCollection.document(uid).updateData(encodedAccount)
     }
 
     private func updateCryptos(
@@ -133,25 +132,28 @@ class WalletService: WalletServiceProtocol {
         return try Firestore.Encoder().encode(account)
     }
     
-    func getAccount() async -> AccountDTO? {
-        guard let snapshot = try? await snapshot() else {
-            return nil
-        }
-        
-        let account = try? snapshot.data(as: AccountDTO.self)
+    func getAccount() async throws -> AccountDTO {
+        let snapshot = try await snapshot()
+        let account = try snapshot.data(as: AccountDTO.self)
         currentAccount = account
         return account
     }
 
-    func getCoin(id: String) async -> AccountDTO.CryptoDTO? {
-        await getAccount()?.cryptos[id]
+    func getCoin(id: String) async throws -> AccountDTO.CryptoDTO? {
+        guard let crypto = try await getAccount().cryptos[id] else {
+            return nil
+        }
+        return crypto
     }
 
-    func getDefaultCoin() async -> AccountDTO.CryptoDTO? {
-        await getAccount()?.cryptos[defaultCoinId]
+    func getDefaultCoin() async throws -> AccountDTO.CryptoDTO {
+        guard let crypto = try await getAccount().cryptos[defaultCoinId] else {
+            throw WalletServiceError.defaultCoinNotFound
+        }
+        return crypto
     }
     
-    private func snapshot() async throws -> DocumentSnapshot? {
+    private func snapshot() async throws -> DocumentSnapshot {
         try await accountsCollection.document(uid).getDocument()
     }
 }
@@ -164,8 +166,22 @@ extension WalletService {
         let destinationAmount: Double
         let operation: AccountDTO.Operation
     }
+}
 
-    enum OperationError: Error {
-        case sourceCoinNotFound
+extension WalletService {
+    enum WalletServiceError: Error {
+        case coinNotFound
+        case defaultCoinNotFound
+    }
+
+    func localizeddDscription(error: Error) -> String {
+        switch error {
+        case WalletServiceError.coinNotFound:
+            "Coin not found"
+        case WalletServiceError.defaultCoinNotFound:
+            "Default coin not found"
+        default:
+            "Unknown error"
+        }
     }
 }

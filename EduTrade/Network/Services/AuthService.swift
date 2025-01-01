@@ -46,8 +46,10 @@ class AuthService: AuthServiceProtocol, ObservableObject {
     }
 
     func fetchCurrentUser() async throws {
-        guard let uid = auth.currentUser?.uid else { return }
-        guard let snapshot = try? await usersCollection.document(uid).getDocument() else { return }
+        guard let uid = auth.currentUser?.uid else {
+            throw AuthServiceError.userNotFound
+        }
+        let snapshot = try await usersCollection.document(uid).getDocument()
         currentUser = try snapshot.data(as: UserDTO.self)
     }
 
@@ -55,5 +57,20 @@ class AuthService: AuthServiceProtocol, ObservableObject {
         try auth.signOut()
         userSession = nil
         currentUser = nil
+    }
+}
+
+extension AuthService {
+    enum AuthServiceError: Error {
+        case userNotFound
+    }
+
+    func localizeddDscription(error: Error) -> String {
+        switch error {
+        case AuthServiceError.userNotFound:
+            "User not found"
+        default:
+            "Unknown error"
+        }
     }
 }

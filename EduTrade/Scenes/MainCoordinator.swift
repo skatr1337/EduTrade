@@ -58,10 +58,14 @@ class MainCoordinator: ObservableObject {
     private var tradeViewModel: TradeViewModel?
     private var transactionsViewModel: TransactionsViewModel?
 
-    @Published var isLoading = false
-    @Published var currentUser: UserDTO?
-    @Published var path: NavigationPath = NavigationPath()
-    @Published var fullScreenCover: FullScreenCover?
+    @MainActor @Published
+    var isLoading = false
+    @MainActor @Published
+    var currentUser: UserDTO?
+    @MainActor @Published
+    var path: NavigationPath = NavigationPath()
+    @MainActor @Published
+    var fullScreenCover: FullScreenCover?
 
     init(
         authService: AuthServiceProtocol = AuthService(),
@@ -75,8 +79,12 @@ class MainCoordinator: ObservableObject {
     private func login() {
         isLoading = true
         Task {
-            try? await fetchCurrentUser()
-            isLoading = false
+            do {
+                try await fetchCurrentUser()
+                isLoading = false
+            } catch {
+                print(error)
+            }
         }
     }
 }
@@ -156,8 +164,12 @@ extension MainCoordinator {
     }
 
     func signOut() {
-        try? authService.signOut()
-        updateCurrentUser()
+        do {
+            try authService.signOut()
+            updateCurrentUser()
+        } catch {
+            print(error)
+        }
     }
 
     private func fetchCurrentUser() async throws {

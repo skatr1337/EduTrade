@@ -39,15 +39,14 @@ class WalletViewModel: ObservableObject {
 
     @MainActor
     func getAccount() async {
-        guard
-            let receivedCoins = try? await cryptoService.fetchList(),
-            let recivedAccount = try? await walletService.getAccount()
-        else {
-            walletCoins = []
-            return
+        do {
+            let receivedCoins = try await cryptoService.fetchList()
+            let recivedAccount = try await walletService.getAccount()
+            walletCoins = makeWalletCoins(account: recivedAccount, coins: receivedCoins)
+            totalValue = makeTotalValue()
+        } catch {
+            print(error)
         }
-        walletCoins = makeWalletCoins(account: recivedAccount, coins: receivedCoins)
-        totalValue = makeTotalValue()
     }
     
     private func makeWalletCoins(

@@ -17,15 +17,24 @@ class CryptoService: CryptoServiceProtocol {
     
     func fetchCoin(id: String) async throws -> CoinMarketsDTO {
         let coins: [CoinMarketsDTO] = try await Endpoints.fetchCoin(id: id).fetch()
-        if let coin = coins.first {
-            return coin
+        guard let coin = coins.first else {
+            throw CryptoServiceError.coinNotFound
         }
-        throw error.notFound
+        return coin
     }
 }
 
 extension CryptoService {
-    enum error: Error {
-        case notFound
+    enum CryptoServiceError: Error {
+        case coinNotFound
+    }
+
+    func localizeddDscription(error: Error) -> String {
+        switch error {
+        case CryptoServiceError.coinNotFound:
+            "Coin not found"
+        default:
+            "Unknown error"
+        }
     }
 }

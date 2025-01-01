@@ -68,56 +68,68 @@ class TradeViewModel: ObservableObject {
     @MainActor
     func getCoin(id: String) async {
         maxValue = 0
-        exchangeCoin = try? await cryptoService.fetchCoin(id: id)
-        switch tradeOption {
-        case .buy:
-            await getBuyCoin(id: id)
-        case .sell:
-            await getSellCoin(id: id)
+        do {
+            exchangeCoin = try await cryptoService.fetchCoin(id: id)
+            switch tradeOption {
+            case .buy:
+                await getBuyCoin(id: id)
+            case .sell:
+                await getSellCoin(id: id)
+            }
+            maxValue = walletSourceCoin?.amount ?? 0
+        } catch {
+            print(error)
         }
-        maxValue = walletSourceCoin?.amount ?? 0
     }
 
     @MainActor
     func getBuyCoin(id: String) async {
-        if let walletCoin = await walletService.getCoin(id: id) {
-            walletDestinationCoin = walletCoin
-        } else if let exchangeCoin {
-            walletDestinationCoin = AccountDTO.CryptoDTO(
-                id: id,
-                symbol: exchangeCoin.symbol,
-                amount: 0
-            )
+        do {
+            if let walletCoin = try await walletService.getCoin(id: id) {
+                walletDestinationCoin = walletCoin
+            } else if let exchangeCoin {
+                walletDestinationCoin = AccountDTO.CryptoDTO(
+                    id: id,
+                    symbol: exchangeCoin.symbol,
+                    amount: 0
+                )
+            }
+            walletSourceCoin = try await walletService.getDefaultCoin()
+            currentValue = 0
+        } catch {
+            print(error)
         }
-        walletSourceCoin = await walletService.getDefaultCoin()
-        currentValue = 0
     }
     
     @MainActor
     func getSellCoin(id: String) async {
-        if let walletCoin = await walletService.getCoin(id: id) {
-            walletSourceCoin = walletCoin
-        } else if let exchangeCoin {
-            walletSourceCoin = AccountDTO.CryptoDTO(
-                id: id,
-                symbol: exchangeCoin.symbol,
-                amount: 0
-            )
+        do {
+            if let walletCoin = try await walletService.getCoin(id: id) {
+                walletSourceCoin = walletCoin
+            } else if let exchangeCoin {
+                walletSourceCoin = AccountDTO.CryptoDTO(
+                    id: id,
+                    symbol: exchangeCoin.symbol,
+                    amount: 0
+                )
+            }
+            walletDestinationCoin = try await walletService.getDefaultCoin()
+            currentValue = 0
+        } catch {
+            print(error)
         }
-        walletDestinationCoin = await walletService.getDefaultCoin()
-        currentValue = 0
     }
 
     @MainActor
     func buy(id: String) async {
-        exchangeCoin = try? await cryptoService.fetchCoin(id: id)
-        guard
-            let walletSourceCoin,
-            let walletDestinationCoin
-        else {
-            return
-        }
         do {
+            exchangeCoin = try await cryptoService.fetchCoin(id: id)
+            guard
+                let walletSourceCoin,
+                let walletDestinationCoin
+            else {
+                return
+            }
             try await walletService.makeExchange(
                 operation: WalletService.ExchangeOpetation(
                     sourceCoin: walletSourceCoin,

@@ -10,6 +10,7 @@ import SwiftUI
 struct TradeView: View {
     @ObservedObject var viewModel: TradeViewModel
     @State var inProgress = false
+    @State private var toast: Toast? = nil
 
     let coin: Coin
 

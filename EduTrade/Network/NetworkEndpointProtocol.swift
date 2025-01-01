@@ -26,10 +26,6 @@ extension NetworkEndpointProtocol {
     }
 }
 
-enum NetworkError: Error {
-    case responseError
-}
-
 extension NetworkEndpointProtocol {
     func fetch<T: Codable>() async throws -> T {
         let (data, reponse) = try await URLSession.shared.data(for: request)
@@ -60,4 +56,15 @@ extension NetworkEndpointProtocol {
     }
 }
 
+enum NetworkError: Error {
+    case responseError
 
+    func localizeddDscription(error: Error) -> String {
+        switch self {
+        case .responseError:
+            "Network response error"
+        default:
+            "Unknown error"
+        }
+    }
+}
