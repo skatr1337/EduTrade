@@ -10,6 +10,7 @@ import SwiftUI
 struct WalletView: View {
     @EnvironmentObject var coordinator: MainCoordinator
     @ObservedObject var viewModel: WalletViewModel
+    @State private var toast: Toast?
     
     var body: some View {
         ZStack {
@@ -19,14 +20,23 @@ struct WalletView: View {
                 wallet
             }
             .task {
-                await viewModel.getAccount()
+                await getAccount()
             }
             .refreshable {
-                await viewModel.getAccount()
+                await getAccount()
             }
+            .toastView(toast: $toast)
         }
     }
-    
+
+    private func getAccount() async {
+        do {
+            try await viewModel.getAccount()
+        } catch {
+            toast = Toast(style: .error, message: error.localizedDescription)
+        }
+    }
+
     @ViewBuilder
     private var header: some View {
         ZStack {

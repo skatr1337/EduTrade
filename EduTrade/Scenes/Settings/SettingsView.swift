@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @EnvironmentObject var coordinator: MainCoordinator
+    @State private var toast: Toast?
 
     var body: some View {
         if let user = coordinator.currentUser {
@@ -38,7 +39,7 @@ struct SettingsView: View {
                 
                 Section("Account") {
                     Button {
-                        coordinator.signOut()
+                        signOut()
                     } label: {
                         SettingsRowView(imageName: "arrow.left.circle.fill", title: String(localized: "Sign out"))
                     }
@@ -51,6 +52,16 @@ struct SettingsView: View {
                     }
                 }
             }
+            .toastView(toast: $toast)
+        }
+    }
+
+    private func signOut() {
+        do {
+            try coordinator.signOut()
+            toast = nil
+        } catch {
+            toast = Toast(style: .error, message: error.localizedDescription)
         }
     }
 }

@@ -45,13 +45,9 @@ class TransactionsViewModel: ObservableObject {
     }
 
     @MainActor
-    func getTransactions() async {
-        do {
-            let recivedAccount = try await walletService.getAccount()
-            transactions = makeTransactions(transactions: recivedAccount.transactions)
-        } catch {
-            print(error)
-        }
+    func getTransactions() async throws {
+        let recivedAccount = try await walletService.getAccount()
+        transactions = makeTransactions(transactions: recivedAccount.transactions)
     }
 
     @MainActor

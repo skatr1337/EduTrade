@@ -9,7 +9,7 @@ import SwiftUI
 struct MarketsView: View {
     @EnvironmentObject var coordinator: MainCoordinator
     @ObservedObject var viewModel: MarketsViewModel
-    @State private var toast: Toast? = nil
+    @State private var toast: Toast?
     
     var body: some View {
         ZStack {
@@ -20,15 +20,23 @@ struct MarketsView: View {
             }
         }
         .task {
-            toast = Toast(style: .success, message: "Saved.", width: 160)
-            await viewModel.refresh()
+            await refresh()
         }
         .refreshable {
-            await viewModel.refresh()
+            await refresh()
         }
         .toastView(toast: $toast)
     }
 
+    private func refresh() async {
+        do {
+            try await viewModel.refresh()
+            toast = nil
+        } catch {
+            toast = Toast(style: .error, message: error.localizedDescription)
+        }
+    }
+    
     @ViewBuilder
     private var header: some View {
         VStack {

@@ -66,88 +66,72 @@ class TradeViewModel: ObservableObject {
     }
 
     @MainActor
-    func getCoin(id: String) async {
+    func getCoin(id: String) async throws {
         maxValue = 0
-        do {
-            exchangeCoin = try await cryptoService.fetchCoin(id: id)
-            switch tradeOption {
-            case .buy:
-                await getBuyCoin(id: id)
-            case .sell:
-                await getSellCoin(id: id)
-            }
-            maxValue = walletSourceCoin?.amount ?? 0
-        } catch {
-            print(error)
+        exchangeCoin = try await cryptoService.fetchCoin(id: id)
+        switch tradeOption {
+        case .buy:
+            try await getBuyCoin(id: id)
+        case .sell:
+            try await getSellCoin(id: id)
         }
+        maxValue = walletSourceCoin?.amount ?? 0
     }
 
     @MainActor
-    func getBuyCoin(id: String) async {
-        do {
-            if let walletCoin = try await walletService.getCoin(id: id) {
-                walletDestinationCoin = walletCoin
-            } else if let exchangeCoin {
-                walletDestinationCoin = AccountDTO.CryptoDTO(
-                    id: id,
-                    symbol: exchangeCoin.symbol,
-                    amount: 0
-                )
-            }
-            walletSourceCoin = try await walletService.getDefaultCoin()
-            currentValue = 0
-        } catch {
-            print(error)
+    func getBuyCoin(id: String) async throws {
+        if let walletCoin = try await walletService.getCoin(id: id) {
+            walletDestinationCoin = walletCoin
+        } else if let exchangeCoin {
+            walletDestinationCoin = AccountDTO.CryptoDTO(
+                id: id,
+                symbol: exchangeCoin.symbol,
+                amount: 0
+            )
         }
+        walletSourceCoin = try await walletService.getDefaultCoin()
+        currentValue = 0
     }
     
     @MainActor
-    func getSellCoin(id: String) async {
-        do {
-            if let walletCoin = try await walletService.getCoin(id: id) {
-                walletSourceCoin = walletCoin
-            } else if let exchangeCoin {
-                walletSourceCoin = AccountDTO.CryptoDTO(
-                    id: id,
-                    symbol: exchangeCoin.symbol,
-                    amount: 0
-                )
-            }
-            walletDestinationCoin = try await walletService.getDefaultCoin()
-            currentValue = 0
-        } catch {
-            print(error)
+    func getSellCoin(id: String) async throws {
+        if let walletCoin = try await walletService.getCoin(id: id) {
+            walletSourceCoin = walletCoin
+        } else if let exchangeCoin {
+            walletSourceCoin = AccountDTO.CryptoDTO(
+                id: id,
+                symbol: exchangeCoin.symbol,
+                amount: 0
+            )
         }
+        walletDestinationCoin = try await walletService.getDefaultCoin()
+        currentValue = 0
     }
 
     @MainActor
-    func buy(id: String) async {
-        do {
-            exchangeCoin = try await cryptoService.fetchCoin(id: id)
-            guard
-                let walletSourceCoin,
-                let walletDestinationCoin
-            else {
-                return
-            }
-            try await walletService.makeExchange(
-                operation: WalletService.ExchangeOpetation(
-                    sourceCoin: walletSourceCoin,
-                    sourceAmount: currentValue,
-                    destinationCoin: walletDestinationCoin,
-                    destinationAmount: destinationValue,
-                    operation: tradeOption == .buy ? .buy : .sell
-                )
+    func buy(id: String) async throws {
+        exchangeCoin = try await cryptoService.fetchCoin(id: id)
+        guard
+            let walletSourceCoin,
+            let walletDestinationCoin
+        else {
+            return
+        }
+        try await walletService.makeExchange(
+            operation: WalletService.ExchangeOpetation(
+                sourceCoin: walletSourceCoin,
+                sourceAmount: currentValue,
+                destinationCoin: walletDestinationCoin,
+                destinationAmount: destinationValue,
+                operation: tradeOption == .buy ? .buy : .sell
             )
-            // refresh data
-            switch tradeOption {
-            case .buy:
-                await getCoin(id: walletDestinationCoin.id)
-            case .sell:
-                await getCoin(id: walletSourceCoin.id)
-            }
-        } catch {
-            print(error)
+        )
+        // refresh data
+        switch tradeOption {
+        case .buy:
+            try await getCoin(id: walletDestinationCoin.id)
+        case .sell:
+            try await getCoin(id: walletSourceCoin.id)
         }
     }
     

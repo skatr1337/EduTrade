@@ -10,7 +10,7 @@ import SwiftUI
 struct TradeView: View {
     @ObservedObject var viewModel: TradeViewModel
     @State var inProgress = false
-    @State private var toast: Toast? = nil
+    @State private var toast: Toast?
 
     let coin: Coin
 
@@ -26,10 +26,20 @@ struct TradeView: View {
         }
         .padding()
         .task {
-            await viewModel.getCoin(id: coin.id)
+            await getCoin()
         }
+        .toastView(toast: $toast)
     }
 
+    func getCoin() async {
+        do {
+            try await viewModel.getCoin(id: coin.id)
+            toast = nil
+        } catch {
+            toast = Toast(style: .error, message: error.localizedDescription)
+        }
+    }
+    
     @ViewBuilder
     private var currentPrice: some View {
         if let coin = viewModel.exchangeCoin {
@@ -74,7 +84,7 @@ struct TradeView: View {
         .pickerStyle(.segmented)
         .onChange(of: viewModel.tradeOption) { _, id in
             Task {
-                await viewModel.getCoin(id: coin.id)
+                await getCoin()
             }
         }
         .padding()
@@ -128,7 +138,13 @@ struct TradeView: View {
         Button {
             Task {
                 inProgress = true
-                await viewModel.buy(id: coin.id)
+                let value = viewModel.tradeOption == .buy ? viewModel.destinationValue : viewModel.currentValue
+                do {
+                    try await viewModel.buy(id: coin.id)
+                    showSuccess(value: value)
+                } catch {
+                    toast = Toast(style: .error, message: error.localizedDescription)
+                }
                 inProgress = false
             }
         } label: {
@@ -152,6 +168,14 @@ struct TradeView: View {
         )
     }
 
+    func showSuccess(value: Double) {
+        switch viewModel.tradeOption {
+        case .buy:
+            toast = Toast(style: .success, message: "You have bought \(value.as6Decimals()) \(coin.symbol.uppercased()) !!!")
+        case .sell:
+            toast = Toast(style: .success, message: "You have sold \(value.as6Decimals()) \(coin.symbol.uppercased()) !!!")
+        }
+    }
 //    var amountFormatter: NumberFormatter {
 //        let formatter = NumberFormatter()
 //        formatter.zeroSymbol = ""

@@ -10,6 +10,7 @@ import SwiftUI
 struct TransactionsView: View {
     @EnvironmentObject var coordinator: MainCoordinator
     @ObservedObject var viewModel: TransactionsViewModel
+    @State private var toast: Toast?
     
     var body: some View {
         Button {
@@ -26,10 +27,20 @@ struct TransactionsView: View {
         }
         
         .task {
-            await viewModel.getTransactions()
+            await getTransactions()
         }
         .refreshable {
-            await viewModel.getTransactions()
+            await getTransactions()
+        }
+        .toastView(toast: $toast)
+    }
+
+    private func getTransactions() async {
+        do {
+            try await viewModel.getTransactions()
+            toast = nil
+        } catch {
+            toast = Toast(style: .error, message: error.localizedDescription)
         }
     }
 }

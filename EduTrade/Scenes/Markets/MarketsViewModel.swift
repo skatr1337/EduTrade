@@ -32,13 +32,9 @@ class MarketsViewModel: ObservableObject {
     var coins: [Coin] = []
 
     @MainActor
-    func refresh() async {
-        do {
-            let receivedCoins = try await cryptoService.fetchList()
-            coins = makeCoins(coinMarkets: receivedCoins)
-        } catch {
-            print(error)
-        }
+    func refresh() async throws {
+        let receivedCoins = try await cryptoService.fetchList()
+        coins = makeCoins(coinMarkets: receivedCoins)
     }
 
     private func makeCoins(coinMarkets: [CoinMarketsDTO]) -> [Coin] {

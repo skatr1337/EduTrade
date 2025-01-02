@@ -10,7 +10,7 @@ import UIKit
 
 extension Color {
     static let unselectedIcon: Color = .secondary
-    static let toastForeground: Color = .accentColor
+    static let toastForeground: Color = .primary
     static let toastBackground = Color(.systemBackground)
 }
 

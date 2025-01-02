@@ -79,12 +79,8 @@ class MainCoordinator: ObservableObject {
     private func login() {
         isLoading = true
         Task {
-            do {
-                try await fetchCurrentUser()
-                isLoading = false
-            } catch {
-                print(error)
-            }
+            try? await fetchCurrentUser()
+            isLoading = false
         }
     }
 }
@@ -163,13 +159,9 @@ extension MainCoordinator {
         try await walletService?.makeInitialCryptos()
     }
 
-    func signOut() {
-        do {
-            try authService.signOut()
-            updateCurrentUser()
-        } catch {
-            print(error)
-        }
+    func signOut() throws {
+        try authService.signOut()
+        updateCurrentUser()
     }
 
     private func fetchCurrentUser() async throws {

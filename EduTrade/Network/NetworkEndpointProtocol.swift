@@ -63,8 +63,6 @@ enum NetworkError: Error {
         switch self {
         case .responseError:
             "Network response error"
-        default:
-            "Unknown error"
         }
     }
 }
