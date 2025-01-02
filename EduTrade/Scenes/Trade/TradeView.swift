@@ -113,12 +113,17 @@ struct TradeView: View {
             }
         }
 
-        TextField (
+        TextField(
             "0.000000",
             value: $viewModel.currentValue,
             format: .number
 //            formatter: amountFormatter
         )
+        .onChange(of: viewModel.currentValue, initial: false) {
+            if viewModel.currentValue > viewModel.maxValue {
+                viewModel.currentValue = viewModel.maxValue
+            }
+        }
         .disabled(inProgress)
         .keyboardType(.decimalPad)
         .textFieldStyle(RoundedBorderTextFieldStyle())
