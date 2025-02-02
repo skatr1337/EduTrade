@@ -4,12 +4,15 @@
 //
 //  Created by Filip Biegaj on 28/11/2024.
 //
+
 import SwiftUI
 
-struct MarketsView: View {
+struct MarketsView<ViewModel: MarketsViewModelProtocol>: View, InspectableView {
     @EnvironmentObject var coordinator: MainCoordinator
-    @ObservedObject var viewModel: MarketsViewModel
+    @ObservedObject var viewModel: ViewModel
     @State private var toast: Toast?
+
+    var didAppear: ((Self) -> Void)?
     
     var body: some View {
         ZStack {
@@ -24,6 +27,9 @@ struct MarketsView: View {
         }
         .refreshable {
             await refresh()
+        }
+        .onAppear {
+            didAppear?(self)
         }
         .toastView(toast: $toast)
     }
@@ -58,6 +64,7 @@ struct MarketsView: View {
             }
         }
         .listStyle(PlainListStyle())
+        .accessibilityIdentifier("coinsList")
     }
 }
 

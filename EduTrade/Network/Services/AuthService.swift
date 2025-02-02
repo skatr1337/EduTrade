@@ -9,7 +9,6 @@ import FirebaseAuth
 import FirebaseFirestore
 
 protocol AuthServiceProtocol {
-    var userSession: FirebaseAuth.User? { get }
     var currentUser: UserDTO? { get }
     func signIn(email: String, password: String) async throws
     func createUser(email: String, password: String, fullname: String) async throws
@@ -20,8 +19,8 @@ protocol AuthServiceProtocol {
 class AuthService: AuthServiceProtocol, ObservableObject {
     private let auth: Auth
     private let usersCollection: CollectionReference
+    private var userSession: FirebaseAuth.User?
 
-    @Published var userSession: FirebaseAuth.User?
     @Published var currentUser: UserDTO?
 
     init() {

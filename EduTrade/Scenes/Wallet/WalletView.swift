@@ -7,11 +7,13 @@
 
 import SwiftUI
 
-struct WalletView: View {
+struct WalletView<ViewModel: WalletViewModelProtocol>: View, InspectableView {
     @EnvironmentObject var coordinator: MainCoordinator
-    @ObservedObject var viewModel: WalletViewModel
+    @ObservedObject var viewModel: ViewModel
     @State private var toast: Toast?
-    
+
+    var didAppear: ((Self) -> Void)?
+
     var body: some View {
         ZStack {
             Color.gray.opacity(0.1).ignoresSafeArea()
@@ -24,6 +26,9 @@ struct WalletView: View {
             }
             .refreshable {
                 await getAccount()
+            }
+            .onAppear {
+                didAppear?(self)
             }
             .toastView(toast: $toast)
         }
@@ -47,7 +52,7 @@ struct WalletView: View {
                 Text(viewModel.totalValue.asCurrencyWith2Decimals())
                     .font(.headline)
                     .fontWeight(.heavy)
-                
+                    .accessibilityIdentifier("totalValue")
             }
             Button {
                 Task {
@@ -68,6 +73,7 @@ struct WalletView: View {
             WalletRowView(walletCoin: coin)
         }
         .listStyle(PlainListStyle())
+        .accessibilityIdentifier("walletList")
     }
 }
 #Preview {

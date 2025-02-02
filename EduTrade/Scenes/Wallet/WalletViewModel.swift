@@ -12,22 +12,38 @@ struct WalletCoin: Identifiable {
     let image: SymbolImage
     let amount: Double
     let value: Double
+    let isFiatCurrency: Bool
 
-    enum SymbolImage {
+    enum SymbolImage: Equatable {
         case imegeUrl(URL)
         case image(Image)
     }
 }
 
-class WalletViewModel: ObservableObject {
+extension WalletCoin: Equatable {
+    static func == (lhs: WalletCoin, rhs: WalletCoin) -> Bool {
+        lhs.symbol == rhs.symbol &&
+        lhs.image == rhs.image &&
+        lhs.amount == rhs.amount &&
+        lhs.value == rhs.value
+    }
+}
+
+protocol WalletViewModelProtocol: ObservableObject {
+    var walletCoins: [WalletCoin] { get }
+    var totalValue: Double { get }
+    func getAccount() async throws
+}
+
+class WalletViewModel: WalletViewModelProtocol {
     let cryptoService: CryptoServiceProtocol
     let walletService: WalletServiceProtocol
     
     @MainActor @Published
-    var walletCoins: [WalletCoin] = []
+    private(set) var walletCoins: [WalletCoin] = []
     
     @MainActor @Published
-    var totalValue: Double = 0
+    private(set) var totalValue: Double = 0
     
     init(
         cryptoService: CryptoServiceProtocol,
@@ -68,7 +84,8 @@ class WalletViewModel: ObservableObject {
                     symbol: $0.value.symbol,
                     image: .imegeUrl(url),
                     amount: $0.value.amount,
-                    value: $0.value.amount * price
+                    value: $0.value.amount * price,
+                    isFiatCurrency: false
                 )
             )
         }
@@ -77,10 +94,11 @@ class WalletViewModel: ObservableObject {
 
     private func creteateDefautlCoin(crypto: AccountDTO.CryptoDTO) -> WalletCoin {
         WalletCoin(
-            symbol: crypto.id,
+            symbol: crypto.symbol,
             image: .image(Image(systemName: "dollarsign")),
             amount: crypto.amount,
-            value: crypto.amount
+            value: crypto.amount,
+            isFiatCurrency: true
         )
     }
     

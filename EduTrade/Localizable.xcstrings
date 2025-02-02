@@ -22,6 +22,7 @@
       "shouldTranslate" : false
     },
     "%lf" : {
+      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {

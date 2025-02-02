@@ -6,7 +6,7 @@
 //
 import Foundation
 
-struct Coin: Identifiable {
+struct Coin: Identifiable, Equatable {
     let id: String
     let rank: Int
     let symbol: String
@@ -16,7 +16,12 @@ struct Coin: Identifiable {
     let isPriceChangePosive: Bool
 }
 
-class MarketsViewModel: ObservableObject {
+protocol MarketsViewModelProtocol: ObservableObject {
+    var coins: [Coin] { get }
+    func refresh() async throws
+}
+
+class MarketsViewModel: MarketsViewModelProtocol {
     let cryptoService: CryptoServiceProtocol
     let walletService: WalletServiceProtocol
 

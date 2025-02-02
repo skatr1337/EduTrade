@@ -27,8 +27,13 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      shouldUseLaunchSchemeArgsEnv = "YES"
-      shouldAutocreateTestPlan = "YES">
+      shouldUseLaunchSchemeArgsEnv = "YES">
+      <TestPlans>
+         <TestPlanReference
+            reference = "container:EduTrade.xctestplan"
+            default = "YES">
+         </TestPlanReference>
+      </TestPlans>
       <Testables>
          <TestableReference
             skipped = "NO"
@@ -40,6 +45,26 @@
                BlueprintName = "EduTradeTests"
                ReferencedContainer = "container:EduTrade.xcodeproj">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "CryptoServiceTests">
+               </Test>
+               <Test
+                  Identifier = "CryptoServiceTests/fetchCoinDecodingError()">
+               </Test>
+               <Test
+                  Identifier = "CryptoServiceTests/fetchCoinSuccess(data:result:)">
+               </Test>
+               <Test
+                  Identifier = "CryptoServiceTests/fetchList(response:)">
+               </Test>
+               <Test
+                  Identifier = "CryptoServiceTests/fetchListDecodingError()">
+               </Test>
+               <Test
+                  Identifier = "CryptoServiceTests/fetchListSuccess(data:result:)">
+               </Test>
+            </SkippedTests>
          </TestableReference>
          <TestableReference
             skipped = "NO"

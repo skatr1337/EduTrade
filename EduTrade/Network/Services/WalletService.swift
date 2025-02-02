@@ -16,18 +16,25 @@ protocol WalletServiceProtocol {
     func getCoin(id: String) async throws -> AccountDTO.CryptoDTO?
 }
 
+protocol CollectionReferenceProtocol {
+    func document (_ id: String) -> DocumentReference
+}
+
 class WalletService: WalletServiceProtocol {
     private let uid: String
-    private let accountsCollection: CollectionReference
+    private let accountsCollection: CollectionReferenceProtocol
     private var currentAccount: AccountDTO?
 
-    var defaultCoinId = "dollar"
-    var defaultSymbol = "usd"
+    let defaultCoinId = "dollar"
+    let defaultSymbol = "usd"
     private let defaultAmount: Double = 1000
 
-    init(uid: String) {
+    init(
+        uid: String,
+        accountsCollection: CollectionReferenceProtocol = Firestore.firestore().collection("accounts")
+    ) {
         self.uid = uid
-        self.accountsCollection = Firestore.firestore().collection("accounts")
+        self.accountsCollection = accountsCollection
     }
 
     func makeInitialCryptos() async throws {
@@ -185,3 +192,5 @@ extension WalletService {
         }
     }
 }
+
+extension CollectionReference: CollectionReferenceProtocol {}

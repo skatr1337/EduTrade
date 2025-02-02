@@ -20,11 +20,6 @@ extension UserDTO {
             formatter.style = .abbreviated
             return formatter.string(from: components)
         }
-        
         return ""
     }
-}
-
-extension UserDTO {
-    static var MOCK_USER = UserDTO(id: NSUUID().uuidString, fullname: "Filip Biegaj", email: "filip@biegaj.com")
 }

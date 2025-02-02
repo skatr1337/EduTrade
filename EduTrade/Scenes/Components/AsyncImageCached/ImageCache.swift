@@ -7,29 +7,39 @@
 
 import SwiftUI
 
-public protocol ImageCacheProtocol {
+protocol ImageCacheProtocol {
     func get(url: URL) -> Image?
     func set(url: URL, image: Image)
 }
 
-public class ImageCache: ImageCacheProtocol {
-    public static let shared = ImageCache()
+class ImageCache: ImageCacheProtocol {
+    static let shared = ImageCache()
 
+    private let lockQueue = DispatchQueue(
+        label: "imageCache.lock.queue",
+        attributes: .concurrent
+    )
     private var images: [URL: Image] = [:]
 
     private init() {
         // Don't allow multiple instances
     }
 
-    public func get(url: URL) -> Image? {
-        images[url]
+    func get(url: URL) -> Image? {
+        lockQueue.sync {
+            images[url]
+        }
     }
 
-    public func set(url: URL, image: Image) {
-        images[url] = image
+    func set(url: URL, image: Image) {
+        lockQueue.async(flags: .barrier) {
+            self.images[url] = image
+        }
     }
 
-    public func clear() {
-        images.removeAll()
+    func clear() {
+        lockQueue.async(flags: .barrier) {
+            self.images.removeAll()
+        }
     }
 }

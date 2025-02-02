@@ -19,13 +19,16 @@ struct InputView: View {
                 .foregroundColor(Color(.darkGray))
                 .fontWeight(.semibold)
                 .font(.footnote)
+                .accessibilityIdentifier("text")
             
             if isSecureField {
                 SecureField(placeholder, text: $text)
                     .font(.system(size: 14))
+                    .accessibilityIdentifier("secureField")
             } else {
                 TextField(placeholder, text: $text)
                     .font(.system(size: 14))
+                    .accessibilityIdentifier("textField")
             }
             
             Divider()

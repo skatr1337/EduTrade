@@ -7,7 +7,11 @@
 
 import Foundation
 
-class LoginViewModel: ObservableObject {
+protocol LoginViewModelProtocol: ObservableObject {
+    func formIsValid(email: String, password: String) -> Bool
+}
+
+class LoginViewModel: LoginViewModelProtocol {
     func formIsValid(email: String, password: String) -> Bool {
         !email.isEmpty &&
         email.contains("@") &&

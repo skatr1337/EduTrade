@@ -17,6 +17,17 @@ struct Transaction: Identifiable {
     let price: Double?
 }
 
+extension Transaction: Equatable {
+    static func == (lhs: Transaction, rhs: Transaction) -> Bool {
+        lhs.timeStamp == rhs.timeStamp &&
+        lhs.pair == rhs.pair &&
+        lhs.operation == rhs.operation &&
+        lhs.sourceAmount == rhs.sourceAmount &&
+        lhs.destinationAmount == rhs.destinationAmount &&
+        lhs.price == rhs.price
+    }
+}
+
 enum TransactionOperation: String {
     case buy = "Buy"
     case sell = "Sell"
@@ -34,11 +45,16 @@ extension AccountDTO.Operation {
     }
 }
 
-class TransactionsViewModel: ObservableObject {
-    let walletService: WalletServiceProtocol
+protocol TransactionsViewModelProtocol: ObservableObject {
+    var transactions: [Transaction] { get }
+    func getTransactions() async throws
+}
+
+class TransactionsViewModel: TransactionsViewModelProtocol {
+    private let walletService: WalletServiceProtocol
     
     @MainActor @Published
-    var transactions: [Transaction] = []
+    private(set) var transactions: [Transaction] = []
     
     init(walletService: WalletServiceProtocol) {
         self.walletService = walletService

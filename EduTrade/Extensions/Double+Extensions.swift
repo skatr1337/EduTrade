@@ -31,6 +31,14 @@ extension Double {
         return formatter
     }()
 
+    private static let formatter2: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.usesGroupingSeparator = true
+        formatter.minimumFractionDigits = 2
+        formatter.maximumFractionDigits = 2
+        return formatter
+    }()
+
     private static let currencyFormatter6: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.usesGroupingSeparator = true
@@ -59,6 +67,13 @@ extension Double {
     func as6Decimals() -> String {
         let number = NSNumber(value: self)
         return Double.formatter6.string(
+            from: number
+        ) ?? "\(Double.currencySymbol)0.00"
+    }
+
+    func as2Decimals() -> String {
+        let number = NSNumber(value: self)
+        return Double.formatter2.string(
             from: number
         ) ?? "\(Double.currencySymbol)0.00"
     }

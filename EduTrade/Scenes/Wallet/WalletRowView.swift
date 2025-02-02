@@ -45,12 +45,22 @@ struct WalletRowView: View {
     @ViewBuilder
     private var amount: some View {
         VStack(alignment: .trailing) {
-            Text("\(walletCoin.amount)")
+            Text(amountString)
                 .font(.headline)
                 .padding(.trailing, 6)
+                .accessibilityIdentifier("amount")
             Text(walletCoin.value.asCurrencyWith2Decimals())
                 .font(.headline)
                 .padding(.trailing, 6)
+                .accessibilityIdentifier("value")
+        }
+    }
+
+    private var amountString: String {
+        if walletCoin.isFiatCurrency {
+            return walletCoin.amount.as2Decimals()
+        } else {
+            return walletCoin.amount.as6Decimals()
         }
     }
 }
@@ -64,7 +74,8 @@ struct WalletRowView: View {
             symbol: "usdt",
             image: .imegeUrl(url),
             amount: 1000,
-            value: 1000
+            value: 1000,
+            isFiatCurrency: false
         )
     )
 }

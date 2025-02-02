@@ -6,23 +6,40 @@
 //
 
 import SwiftUI
+protocol TradeViewModelProtocol: ObservableObject {
+    var tradeOption: TradeViewModel.TradeOption { get set }
+    var exchangeCoin: CoinMarketsDTO? { get }
+    var walletSourceCoin: AccountDTO.CryptoDTO? { get }
+    var walletDestinationCoin: AccountDTO.CryptoDTO? { get }
+    var currentValue: Double { get set }
+    var currentValueSlider: Double { get set }
+    var destinationValue: Double { get }
+    var maxValue: Double { get set }
+    var maxValueSlider: Double { get }
+    var percentageButtons: [Double] { get }
+    func percentage(_ percentage: Double) async
+    func getCoin(id: String) async throws
+    func buy(id: String) async throws
+}
 
-class TradeViewModel: ObservableObject {
+class TradeViewModel: TradeViewModelProtocol {
     private let cryptoService: CryptoServiceProtocol
     private let walletService: WalletServiceProtocol
     private var destinationCoin: CoinMarketsDTO?
+    private let sliderFactor = 1_000_000.0
     
     @MainActor @Published
     var tradeOption: TradeOption = .buy
-
-    let sliderFactor = 1_000_000.0
-
+    
     @MainActor @Published
-    var exchangeCoin: CoinMarketsDTO?
+    private(set) var exchangeCoin: CoinMarketsDTO?
+    
     @MainActor @Published
-    var walletDestinationCoin: AccountDTO.CryptoDTO?
+    private(set) var walletSourceCoin: AccountDTO.CryptoDTO?
+    
     @MainActor @Published
-    var walletSourceCoin: AccountDTO.CryptoDTO?
+    private(set) var walletDestinationCoin: AccountDTO.CryptoDTO?
+    
     @MainActor @Published
     var currentValue: Double = 0 {
         didSet {
@@ -46,16 +63,21 @@ class TradeViewModel: ObservableObject {
             currentValue = newValue / sliderFactor
         }
     }
+
     @MainActor @Published
-    var destinationValue: Double = 0
+    private(set) var destinationValue: Double = 0
+
     @MainActor @Published
     var maxValue: Double = 0 {
         didSet {
             maxValueSlider = maxValue * sliderFactor
         }
     }
+
     @MainActor @Published
-    var maxValueSlider: Double = 0
+    private(set) var maxValueSlider: Double = 0
+
+    let percentageButtons: [Double] = [0.25, 0.5, 0.75, 1.0]
 
     init(
         cryptoService: CryptoServiceProtocol,
@@ -63,6 +85,13 @@ class TradeViewModel: ObservableObject {
     ) {
         self.cryptoService = cryptoService
         self.walletService = walletService
+    }
+
+    // MARK: Public interface
+
+    @MainActor
+    func percentage(_ percentage: Double) {
+        currentValue = maxValue * percentage
     }
 
     @MainActor
@@ -76,36 +105,6 @@ class TradeViewModel: ObservableObject {
             try await getSellCoin(id: id)
         }
         maxValue = walletSourceCoin?.amount ?? 0
-    }
-
-    @MainActor
-    func getBuyCoin(id: String) async throws {
-        if let walletCoin = try await walletService.getCoin(id: id) {
-            walletDestinationCoin = walletCoin
-        } else if let exchangeCoin {
-            walletDestinationCoin = AccountDTO.CryptoDTO(
-                id: id,
-                symbol: exchangeCoin.symbol,
-                amount: 0
-            )
-        }
-        walletSourceCoin = try await walletService.getDefaultCoin()
-        currentValue = 0
-    }
-    
-    @MainActor
-    func getSellCoin(id: String) async throws {
-        if let walletCoin = try await walletService.getCoin(id: id) {
-            walletSourceCoin = walletCoin
-        } else if let exchangeCoin {
-            walletSourceCoin = AccountDTO.CryptoDTO(
-                id: id,
-                symbol: exchangeCoin.symbol,
-                amount: 0
-            )
-        }
-        walletDestinationCoin = try await walletService.getDefaultCoin()
-        currentValue = 0
     }
 
     @MainActor
@@ -134,10 +133,37 @@ class TradeViewModel: ObservableObject {
             try await getCoin(id: walletSourceCoin.id)
         }
     }
+
+    // MARK: Private interface
+
+    @MainActor
+    private func getBuyCoin(id: String) async throws {
+        if let walletCoin = try await walletService.getCoin(id: id) {
+            walletDestinationCoin = walletCoin
+        } else if let exchangeCoin {
+            walletDestinationCoin = AccountDTO.CryptoDTO(
+                id: id,
+                symbol: exchangeCoin.symbol,
+                amount: 0
+            )
+        }
+        walletSourceCoin = try await walletService.getDefaultCoin()
+        currentValue = 0
+    }
     
     @MainActor
-    func percentage(_ percentage: Double) {
-        currentValue = maxValue * percentage
+    private func getSellCoin(id: String) async throws {
+        if let walletCoin = try await walletService.getCoin(id: id) {
+            walletSourceCoin = walletCoin
+        } else if let exchangeCoin {
+            walletSourceCoin = AccountDTO.CryptoDTO(
+                id: id,
+                symbol: exchangeCoin.symbol,
+                amount: 0
+            )
+        }
+        walletDestinationCoin = try await walletService.getDefaultCoin()
+        currentValue = 0
     }
 }
 
@@ -169,9 +195,9 @@ extension TradeViewModel {
         var color: Color {
             switch self {
             case .buy:
-                Color.green
+                Color.buy
             case .sell:
-                Color.red
+                Color.sell
             }
         }
     }

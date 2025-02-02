@@ -12,5 +12,7 @@ extension Color {
     static let unselectedIcon: Color = .secondary
     static let toastForeground: Color = .primary
     static let toastBackground = Color(.systemBackground)
+    static let buy = Color.green
+    static let sell = Color.red
 }
 

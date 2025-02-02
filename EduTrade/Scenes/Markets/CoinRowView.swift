@@ -23,6 +23,7 @@ struct CoinRowView: View {
         Text("\(coin.rank)")
             .font(.caption)
             .frame(minWidth: 30)
+            .accessibilityIdentifier("rank")
         AsyncImageCached(url: coin.image) { phase in
             if let image = phase.image {
                 image.resizable()

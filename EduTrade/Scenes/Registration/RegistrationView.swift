@@ -7,14 +7,16 @@
 
 import SwiftUI
 
-struct RegistrationView: View {
+struct RegistrationView<ViewModel: RegistrationViewModelProtocol>: View, InspectableView {
     @State private var email = ""
     @State private var fullname = ""
     @State private var password = ""
     @State private var confirmPassword = ""
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var coordinator: MainCoordinator
-    @ObservedObject var viewModel: RegistrationViewModel
+    @ObservedObject var viewModel: ViewModel
+
+    var didAppear: ((Self) -> Void)?
     
     var body: some View {
         let formIsValid = viewModel.formIsValid(
@@ -29,25 +31,36 @@ struct RegistrationView: View {
                 .scaledToFill()
                 .frame(width: 100, height: 120)
                 .padding(.vertical, 32)
+                .accessibilityIdentifier("image")
             
             VStack(spacing: 24) {
-                InputView(text: $email,
-                          title: String(localized: "Email Address"),
-                          placeholder: "name@example.com")
+                InputView(
+                    text: $email,
+                    title: String(localized: "Email Address"),
+                    placeholder: "name@example.com"
+                )
                 .autocapitalization(.none)
                 
-                InputView(text: $fullname,
-                          title: String(localized: "Full Name"),
-                          placeholder: String(localized: "Enter your name"))
+                InputView(
+                    text: $fullname,
+                    title: String(localized: "Full Name"),
+                    placeholder: String(localized: "Enter your name")
+                )
                 
-                InputView(text: $password,
-                          title: String(localized: "Password"),
-                          placeholder: String(localized: "Enter your Password"), isSecureField: true)
+                InputView(
+                    text: $password,
+                    title: String(localized: "Password"),
+                    placeholder: String(localized: "Enter your Password"),
+                    isSecureField: true
+                )
                 
                 ZStack(alignment: .trailing) {
-                    InputView(text: $confirmPassword,
-                              title: String(localized: "Confirm password"),
-                              placeholder: String(localized: "Confirm your Password"), isSecureField: true)
+                    InputView(
+                        text: $confirmPassword,
+                        title: String(localized: "Confirm password"),
+                        placeholder: String(localized: "Confirm your Password"),
+                        isSecureField: true
+                    )
                     
                     if !password.isEmpty && !confirmPassword.isEmpty {
                         if password == confirmPassword {
@@ -61,12 +74,9 @@ struct RegistrationView: View {
                                 .fontWeight(.bold)
                                 .foregroundColor(Color(.systemRed))
                         }
-                    
                     }
                 }
-            
             }
-            
             .padding(.horizontal)
             .padding(.top, 12)
             
@@ -90,6 +100,7 @@ struct RegistrationView: View {
             .opacity(formIsValid ? 1.0 : 0.5)
             .cornerRadius(10)
             .padding(.top, 24)
+            .accessibilityIdentifier("signUpButton")
             
             Spacer()
             
@@ -103,6 +114,9 @@ struct RegistrationView: View {
                 }
                 .font(.system(size: 14))
             }
+        }
+        .onAppear {
+            didAppear?(self)
         }
     }
 }

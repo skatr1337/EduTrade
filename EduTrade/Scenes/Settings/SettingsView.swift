@@ -29,7 +29,6 @@ struct SettingsView: View {
                                 .font(.subheadline)
                                 .fontWeight(.semibold)
                                 .padding(.top, 4)
-                            
                             Text(user.email)
                                 .font(.footnote)
                                 .accentColor(.gray)

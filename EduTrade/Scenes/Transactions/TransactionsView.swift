@@ -7,11 +7,13 @@
 
 import SwiftUI
 
-struct TransactionsView: View {
+struct TransactionsView<ViewModel: TransactionsViewModelProtocol>: View, InspectableView {
     @EnvironmentObject var coordinator: MainCoordinator
-    @ObservedObject var viewModel: TransactionsViewModel
+    @ObservedObject var viewModel: ViewModel
     @State private var toast: Toast?
     
+    var didAppear: ((Self) -> Void)?
+
     var body: some View {
         Button {
             Task {
@@ -25,12 +27,15 @@ struct TransactionsView: View {
         Spacer()
         List(viewModel.transactions) { transaction in TransactionsRowView(transaction: transaction)
         }
-        
+        .accessibilityIdentifier("transactionsList")
         .task {
             await getTransactions()
         }
         .refreshable {
             await getTransactions()
+        }
+        .onAppear {
+            didAppear?(self)
         }
         .toastView(toast: $toast)
     }

@@ -7,12 +7,13 @@
 
 import SwiftUI
 
-struct TradeView: View {
-    @ObservedObject var viewModel: TradeViewModel
+struct TradeView<ViewModel: TradeViewModelProtocol>: View, InspectableView {
+    @ObservedObject var viewModel: ViewModel
     @State var inProgress = false
     @State private var toast: Toast?
 
     let coin: Coin
+    var didAppear: ((Self) -> Void)?
 
     var body: some View {
         VStack {
@@ -21,12 +22,17 @@ struct TradeView: View {
             walletDestination
             tradeOptionPicker
             amountSlider
+            amountButtons
+            textField
             tradeOptionButton
             Spacer()
         }
         .padding()
         .task {
             await getCoin()
+        }
+        .onAppear {
+            didAppear?(self)
         }
         .toastView(toast: $toast)
     }
@@ -47,6 +53,7 @@ struct TradeView: View {
             HStack {
                 Text("Price: \(price)")
                     .font(Font.system(size: 20, weight: .heavy, design: .default))
+                    .accessibilityIdentifier("currentPrice")
                 Spacer()
             }
             .padding(.bottom)
@@ -58,6 +65,7 @@ struct TradeView: View {
         HStack {
             if let coin = viewModel.walletSourceCoin {
                 Text("From \(coin.symbol.uppercased()): \(coin.amount.as6Decimals())")
+                    .accessibilityIdentifier("from")
                 Spacer()
             }
         }
@@ -68,6 +76,7 @@ struct TradeView: View {
         HStack {
             if let coin = viewModel.walletDestinationCoin {
                 Text("To \(coin.symbol.uppercased()): \(coin.amount.as6Decimals())")
+                    .accessibilityIdentifier("to")
                 Spacer()
             }
         }
@@ -87,6 +96,7 @@ struct TradeView: View {
                 await getCoin()
             }
         }
+        .accessibilityIdentifier("picker")
         .padding()
     }
     
@@ -96,28 +106,36 @@ struct TradeView: View {
             value: $viewModel.currentValueSlider,
             in: 0...viewModel.maxValueSlider
         )
+        .accessibilityIdentifier("slider")
         .disabled(inProgress)
-        
+    }
+
+    @ViewBuilder
+    private var amountButtons: some View {
         HStack {
-            ForEach([0.25, 0.5, 0.75, 1.0], id: \.self) { percentage in
+            ForEach(viewModel.percentageButtons, id: \.self) { percentage in
                 Button("\(Int(percentage * 100))%") {
-                    viewModel.percentage(percentage)
+                    Task {
+                        await viewModel.percentage(percentage)
+                    }
                 }
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 30)
-                    .foregroundColor(Color.black)
-                    .background(Color.gray.opacity(0.2))
-                    .cornerRadius(8)
-                    .disabled(inProgress
-                )
+                .frame(maxWidth: .infinity)
+                .frame(height: 30)
+                .foregroundColor(Color.black)
+                .background(Color.gray.opacity(0.2))
+                .cornerRadius(8)
+                .accessibilityIdentifier("\(Int(percentage * 100))%")
+                .disabled(inProgress)
             }
         }
-
+    }
+    
+    @ViewBuilder
+    private var textField: some View {
         TextField(
             "0.000000",
             value: $viewModel.currentValue,
             format: .number
-//            formatter: amountFormatter
         )
         .onChange(of: viewModel.currentValue, initial: false) {
             if viewModel.currentValue > viewModel.maxValue {
@@ -129,10 +147,12 @@ struct TradeView: View {
         .textFieldStyle(RoundedBorderTextFieldStyle())
         .frame(maxWidth: 150)
         .font(Font.system(size: 20, design: .default))
+        .accessibilityIdentifier("textField")
         .padding()
         HStack {
             if let symbol = viewModel.walletDestinationCoin?.symbol.uppercased() {
                 Text("\(viewModel.destinationValue.as6Decimals()) \(symbol)")
+                    .accessibilityIdentifier("amount")
             }
         }
     }
@@ -166,6 +186,7 @@ struct TradeView: View {
         }
         .buttonStyle(.borderedProminent)
         .tint(color)
+        .accessibilityIdentifier("tradeButton")
         .disabled(
             viewModel.maxValue.isZero ||
             viewModel.currentValue.isZero ||
@@ -181,13 +202,6 @@ struct TradeView: View {
             toast = Toast(style: .success, message: "You have sold \(value.as6Decimals()) \(coin.symbol.uppercased()) !!!")
         }
     }
-//    var amountFormatter: NumberFormatter {
-//        let formatter = NumberFormatter()
-//        formatter.zeroSymbol = ""
-//        formatter.maximum = NSNumber(value: viewModel.maxValue)
-//        formatter.locale = Locale()
-//        return formatter
-//    }
 }
 
 #Preview {

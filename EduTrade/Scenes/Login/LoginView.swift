@@ -7,12 +7,14 @@
 
 import SwiftUI
 
-struct LoginView: View {
+struct LoginView<ViewModel: LoginViewModelProtocol>: View, InspectableView {
     @State private var email = ""
     @State private var password = ""
     @EnvironmentObject var coordinator: MainCoordinator
-    @ObservedObject var viewModel: LoginViewModel
+    @ObservedObject var viewModel: ViewModel
     
+    var didAppear: ((Self) -> Void)?
+
     var body: some View {
         let formIsValid = viewModel.formIsValid(email: email, password: password)
         NavigationStack {
@@ -24,27 +26,35 @@ struct LoginView: View {
                     .scaledToFill()
                     .frame(width: 100, height: 120)
                     .padding(.vertical, 32)
+                    .accessibilityIdentifier("image")
                 
                 // form fields
                 VStack(spacing: 24) {
-                    InputView(text: $email,
-                              title: String(localized: "Email Address"),
-                              placeholder: "name@example.com")
+                    InputView(
+                        text: $email,
+                        title: String(localized: "Email Address"),
+                        placeholder: "name@example.com"
+                    )
                     .autocapitalization(.none)
                     
-                    InputView(text: $password,
-                              title: String(localized: "Password"),
-                              placeholder: String(localized: "Enter your Password"), isSecureField: true)
+                    InputView(
+                        text: $password,
+                        title: String(localized: "Password"),
+                        placeholder: String(localized: "Enter your Password"),
+                        isSecureField: true
+                    )
                 
                 }
-                
                 .padding(.horizontal)
                 .padding(.top, 12)
                 
                 // sign in button
                 Button {
                     Task {
-                        try await  coordinator.signIn(withEmail: email, password: password)
+                        try await coordinator.signIn(
+                            withEmail: email,
+                            password: password
+                        )
                     }
                 } label: {
                     HStack {
@@ -60,6 +70,7 @@ struct LoginView: View {
                 .opacity(formIsValid ? 1.0 : 0.5)
                 .cornerRadius(10)
                 .padding(.top, 24)
+                .accessibilityIdentifier("signInButton")
 
                 Spacer()
                 
@@ -76,6 +87,9 @@ struct LoginView: View {
                     .font(.system(size: 14))
                 }
             }
+        }
+        .onAppear {
+            didAppear?(self)
         }
     }
 }

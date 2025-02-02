@@ -7,7 +7,16 @@
 
 import Foundation
 
-class RegistrationViewModel: ObservableObject {
+protocol RegistrationViewModelProtocol: ObservableObject {
+    func formIsValid(
+        email: String,
+        password: String,
+        confirmPassword: String,
+        fullname: String
+    ) -> Bool
+}
+
+class RegistrationViewModel: RegistrationViewModelProtocol {
     func formIsValid(
         email: String,
         password: String,

@@ -26,9 +26,15 @@ extension NetworkEndpointProtocol {
     }
 }
 
+protocol URLSessionProtocol {
+    func data(for request: URLRequest, delegate: URLSessionTaskDelegate?) async throws -> (Data, URLResponse)
+}
+
+extension URLSession: URLSessionProtocol { }
+
 extension NetworkEndpointProtocol {
-    func fetch<T: Codable>() async throws -> T {
-        let (data, reponse) = try await URLSession.shared.data(for: request)
+    func fetch<T: Codable>(session: URLSessionProtocol = URLSession.shared) async throws -> T {
+        let (data, reponse) = try await session.data(for: request, delegate: nil)
         guard
             let reponse = reponse as? HTTPURLResponse,
             reponse.statusCode == 200

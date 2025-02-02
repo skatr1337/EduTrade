@@ -7,13 +7,13 @@
 
 import SwiftUI
 
-public struct AsyncImageCached<Content>: View where Content: View {
+struct AsyncImageCached<Content>: View where Content: View {
     private let url: URL
     @ViewBuilder
     private let content: (AsyncImagePhase) -> Content
     private let imageCache: ImageCacheProtocol
 
-    public init(
+    init(
         url: URL,
         @ViewBuilder content: @escaping (AsyncImagePhase) -> Content,
         imageCache: ImageCacheProtocol = ImageCache.shared
@@ -23,7 +23,7 @@ public struct AsyncImageCached<Content>: View where Content: View {
         self.imageCache = imageCache
     }
 
-    public var body: some View {
+    var body: some View {
         if let image = imageCache.get(url: url) {
             content(.success(image))
         } else {

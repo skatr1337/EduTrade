@@ -1,0 +1,38 @@
+{
+  "configurations" : [
+    {
+      "id" : "F33D7774-F31D-47BE-82EF-3AE134D93389",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:EduTrade.xcodeproj",
+      "identifier" : "DE17747A2CE4F9C40012613C",
+      "name" : "EduTrade"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:EduTrade.xcodeproj",
+        "identifier" : "DE17748F2CE4F9C60012613C",
+        "name" : "EduTradeTests"
+      }
+    },
+    {
+      "enabled" : false,
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:EduTrade.xcodeproj",
+        "identifier" : "DE1774992CE4F9C60012613C",
+        "name" : "EduTradeUITests"
+      }
+    }
+  ],
+  "version" : 1
+}

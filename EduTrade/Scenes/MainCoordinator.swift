@@ -46,8 +46,23 @@ extension Screen {
     }
 }
 
-@MainActor
-class MainCoordinator: ObservableObject {
+protocol MainCoordinatorProtocol: ObservableObject {
+    var isLoading: Bool { get }
+    var currentUser: UserDTO? { get }
+    var path: NavigationPath { get }
+    var fullScreenCover: FullScreenCover? { get }
+    func push(screen: Screen) async
+    func pop() async
+    func popToRoot() async
+    func presentFullScreenCover(_ cover: FullScreenCover) async
+    func dismissFullScreenCover() async
+    func signIn(withEmail email: String, password: String) async throws
+    func createUser(withEmail email: String, password: String, fullname: String) async throws
+    func signOut() async throws
+    func getAccount() async throws -> AccountDTO?
+}
+
+class MainCoordinator: MainCoordinatorProtocol {
     private let authService: AuthServiceProtocol
     private var walletService: WalletServiceProtocol?
     private let cryptoService: CryptoServiceProtocol
@@ -67,6 +82,7 @@ class MainCoordinator: ObservableObject {
     @MainActor @Published
     var fullScreenCover: FullScreenCover?
 
+    @MainActor
     init(
         authService: AuthServiceProtocol = AuthService(),
         cryptoService: CryptoServiceProtocol = CryptoService()
@@ -76,6 +92,7 @@ class MainCoordinator: ObservableObject {
         login()
     }
 
+    @MainActor
     private func login() {
         isLoading = true
         Task {
@@ -88,22 +105,27 @@ class MainCoordinator: ObservableObject {
 // MARK: Navigation
 
 extension MainCoordinator {
+    @MainActor
     func push(screen: Screen) {
         path.append(screen)
     }
 
+    @MainActor
     func pop() {
         path.removeLast()
     }
-    
+
+    @MainActor
     func popToRoot() {
         path.removeLast(path.count)
     }
 
+    @MainActor
     func presentFullScreenCover(_ cover: FullScreenCover) {
         fullScreenCover = cover
     }
 
+    @MainActor
     func dismissFullScreenCover() {
         fullScreenCover = nil
     }
@@ -148,27 +170,32 @@ extension MainCoordinator {
 // MARK: Authentication
 
 extension MainCoordinator {
+    @MainActor
     func signIn(withEmail email: String, password: String) async throws {
         try await authService.signIn(email: email, password: password)
         updateCurrentUser()
     }
-    
+
+    @MainActor
     func createUser(withEmail email: String, password: String, fullname: String) async throws {
         try await authService.createUser(email: email, password: password, fullname: fullname)
         updateCurrentUser()
         try await walletService?.makeInitialCryptos()
     }
 
+    @MainActor
     func signOut() throws {
         try authService.signOut()
         updateCurrentUser()
     }
 
+    @MainActor
     private func fetchCurrentUser() async throws {
         try await authService.fetchCurrentUser()
         updateCurrentUser()
     }
 
+    @MainActor
     private func updateCurrentUser() {
         currentUser = authService.currentUser
         guard let uid = currentUser?.id else {

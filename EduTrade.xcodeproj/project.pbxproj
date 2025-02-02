@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		26801E062D467D2A0031314C /* ViewInspector in Frameworks */ = {isa = PBXBuildFile; productRef = 26801E052D467D2A0031314C /* ViewInspector */; };
 		DE37C6D72CF8E68000EDDDD9 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = DE37C6D62CF8E68000EDDDD9 /* FirebaseAnalytics */; };
 		DE37C72B2CF8ECFC00EDDDD9 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = DE37C72A2CF8ECFC00EDDDD9 /* FirebaseAuth */; };
 		DE5F8B9F2CFCF0B90059AD1E /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = DE5F8B9E2CFCF0B90059AD1E /* FirebaseFirestore */; };
@@ -68,6 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				26801E062D467D2A0031314C /* ViewInspector in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -155,6 +157,7 @@
 			);
 			name = EduTradeTests;
 			packageProductDependencies = (
+				26801E052D467D2A0031314C /* ViewInspector */,
 			);
 			productName = EduTradeTests;
 			productReference = DE1774902CE4F9C60012613C /* EduTradeTests.xctest */;
@@ -218,6 +221,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				DE37C6D52CF8E68000EDDDD9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				26801DBF2D3D55580031314C /* XCRemoteSwiftPackageReference "ViewInspector" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = DE17747C2CE4F9C40012613C /* Products */;
@@ -580,6 +584,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		26801DBF2D3D55580031314C /* XCRemoteSwiftPackageReference "ViewInspector" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/nalexn/ViewInspector";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.10.1;
+			};
+		};
 		DE37C6D52CF8E68000EDDDD9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -591,6 +603,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		26801E052D467D2A0031314C /* ViewInspector */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 26801DBF2D3D55580031314C /* XCRemoteSwiftPackageReference "ViewInspector" */;
+			productName = ViewInspector;
+		};
 		DE37C6D62CF8E68000EDDDD9 /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = DE37C6D52CF8E68000EDDDD9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
