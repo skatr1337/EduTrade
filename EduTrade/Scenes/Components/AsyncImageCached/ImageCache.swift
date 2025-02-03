@@ -32,14 +32,14 @@ class ImageCache: ImageCacheProtocol {
     }
 
     func set(url: URL, image: Image) {
-        lockQueue.async(flags: .barrier) {
-            self.images[url] = image
+        lockQueue.async(flags: .barrier) { [weak self] in
+            self?.images[url] = image
         }
     }
 
-    func clear() {
-        lockQueue.async(flags: .barrier) {
-            self.images.removeAll()
+    func remove(url: URL) {
+        lockQueue.async(flags: .barrier) { [weak self] in
+            self?.images.removeValue(forKey: url)
         }
     }
 }

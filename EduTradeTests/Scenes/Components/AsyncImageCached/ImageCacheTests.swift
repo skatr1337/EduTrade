@@ -15,15 +15,14 @@ struct ImageCacheTests {
 
     init() {
         imageCache = ImageCache.shared
-        imageCache.clear()
     }
     
     @Test(
         "Test not exisisting image",
         arguments: zip(
             [
-                "https://image.com/image.png",
-                "https://image.com/image_other.png"
+                "https://image.com/image_not_existing.png",
+                "https://imageNotExisting.com/image_other_not_existing.png"
             ] as [String],
             [
                 nil,
@@ -36,6 +35,7 @@ struct ImageCacheTests {
         guard let url = URL(string: urlString) else {
             throw ImageCacheError.urlNotValid
         }
+        imageCache.remove(url: url)
 
         // When / Then
         #expect(imageCache.get(url: url) == resultURL)
@@ -45,8 +45,8 @@ struct ImageCacheTests {
         "Test exisisting image",
         arguments: zip(
             [
-                "https://image.com/image.png",
-                "https://image.com/image_other.png"
+                "https://image.com/image_existing.png",
+                "https://image.com/image_other_existing.png"
             ] as [String],
             [
                 Image(systemName: "house"),
@@ -59,6 +59,7 @@ struct ImageCacheTests {
         guard let url = URL(string: urlString) else {
             throw ImageCacheError.urlNotValid
         }
+        imageCache.remove(url: url)
 
         // When
         imageCache.set(url: url, image: image)
@@ -71,8 +72,8 @@ struct ImageCacheTests {
         "Test update image",
         arguments: zip(
             [
-                "https://image.com/image.png",
-                "https://image.com/image_other.png"
+                "https://image.com/image_update.png",
+                "https://image.com/image_other_update.png"
             ] as [String],
             [
                 (Image(systemName: "house"), Image(systemName: "bitcoinsign.circle.fill")),
@@ -85,45 +86,14 @@ struct ImageCacheTests {
         guard let url = URL(string: urlString) else {
             throw ImageCacheError.urlNotValid
         }
-
+        imageCache.remove(url: url)
+    
         // When
         imageCache.set(url: url, image: image.0)
         imageCache.set(url: url, image: image.1)
 
         // Then
         #expect(imageCache.get(url: url) == image.1)
-    }
-
-    @Test(
-        "Test clear image",
-        arguments: zip(
-            [
-                "https://image.com/image.png",
-                "https://image.com/image_other.png"
-            ] as [String],
-            [
-                Image(systemName: "house"),
-                Image(systemName: "person")
-            ] as [Image]
-        )
-    )
-    func clearImage(urlString: String, image: Image) throws {
-        // Given
-        guard let url = URL(string: urlString) else {
-            throw ImageCacheError.urlNotValid
-        }
-
-        // When
-        imageCache.set(url: url, image: image)
-
-        // Then
-        #expect(imageCache.get(url: url) == image)
-
-        // When
-        imageCache.clear()
-
-        // Then
-        #expect(imageCache.get(url: url) == nil)
     }
 }
 
