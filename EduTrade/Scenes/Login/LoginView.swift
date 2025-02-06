@@ -7,13 +7,11 @@
 
 import SwiftUI
 
-struct LoginView<ViewModel: LoginViewModelProtocol>: View, InspectableView {
+struct LoginView<ViewModel: LoginViewModelProtocol>: View {
     @State private var email = ""
     @State private var password = ""
     @EnvironmentObject var coordinator: MainCoordinator
     @ObservedObject var viewModel: ViewModel
-    
-    var didAppear: ((Self) -> Void)?
 
     var body: some View {
         let formIsValid = viewModel.formIsValid(email: email, password: password)
@@ -87,9 +85,6 @@ struct LoginView<ViewModel: LoginViewModelProtocol>: View, InspectableView {
                     .font(.system(size: 14))
                 }
             }
-        }
-        .onAppear {
-            didAppear?(self)
         }
     }
 }

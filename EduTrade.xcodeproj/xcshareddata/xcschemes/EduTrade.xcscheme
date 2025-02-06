@@ -30,7 +30,7 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:EduTrade.xctestplan"
+            reference = "container:EduTradeTests/EduTradePlan.xctestplan"
             default = "YES">
          </TestPlanReference>
       </TestPlans>

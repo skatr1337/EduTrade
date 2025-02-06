@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "52104F83-30A7-4D9B-9536-7919D2E3417D",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "language" : "en"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:EduTrade.xcodeproj",
+        "identifier" : "DE17748F2CE4F9C60012613C",
+        "name" : "EduTradeTests"
+      }
+    }
+  ],
+  "version" : 1
+}

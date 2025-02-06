@@ -7,12 +7,10 @@
 
 import SwiftUI
 
-struct MarketsView<ViewModel: MarketsViewModelProtocol>: View, InspectableView {
+struct MarketsView<ViewModel: MarketsViewModelProtocol>: View {
     @EnvironmentObject var coordinator: MainCoordinator
     @ObservedObject var viewModel: ViewModel
     @State private var toast: Toast?
-
-    var didAppear: ((Self) -> Void)?
     
     var body: some View {
         ZStack {
@@ -27,9 +25,6 @@ struct MarketsView<ViewModel: MarketsViewModelProtocol>: View, InspectableView {
         }
         .refreshable {
             await refresh()
-        }
-        .onAppear {
-            didAppear?(self)
         }
         .toastView(toast: $toast)
     }

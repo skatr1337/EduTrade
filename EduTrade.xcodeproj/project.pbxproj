@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		26801E062D467D2A0031314C /* ViewInspector in Frameworks */ = {isa = PBXBuildFile; productRef = 26801E052D467D2A0031314C /* ViewInspector */; };
+		2686E89D2D50CD980014385E /* InlineSnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 2686E89C2D50CD980014385E /* InlineSnapshotTesting */; };
+		2686E89F2D50CD980014385E /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 2686E89E2D50CD980014385E /* SnapshotTesting */; };
+		2686E8A12D50CD980014385E /* SnapshotTestingCustomDump in Frameworks */ = {isa = PBXBuildFile; productRef = 2686E8A02D50CD980014385E /* SnapshotTestingCustomDump */; };
 		DE37C6D72CF8E68000EDDDD9 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = DE37C6D62CF8E68000EDDDD9 /* FirebaseAnalytics */; };
 		DE37C72B2CF8ECFC00EDDDD9 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = DE37C72A2CF8ECFC00EDDDD9 /* FirebaseAuth */; };
 		DE5F8B9F2CFCF0B90059AD1E /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = DE5F8B9E2CFCF0B90059AD1E /* FirebaseFirestore */; };
@@ -69,6 +72,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2686E8A12D50CD980014385E /* SnapshotTestingCustomDump in Frameworks */,
+				2686E89F2D50CD980014385E /* SnapshotTesting in Frameworks */,
+				2686E89D2D50CD980014385E /* InlineSnapshotTesting in Frameworks */,
 				26801E062D467D2A0031314C /* ViewInspector in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -158,6 +164,9 @@
 			name = EduTradeTests;
 			packageProductDependencies = (
 				26801E052D467D2A0031314C /* ViewInspector */,
+				2686E89C2D50CD980014385E /* InlineSnapshotTesting */,
+				2686E89E2D50CD980014385E /* SnapshotTesting */,
+				2686E8A02D50CD980014385E /* SnapshotTestingCustomDump */,
 			);
 			productName = EduTradeTests;
 			productReference = DE1774902CE4F9C60012613C /* EduTradeTests.xctest */;
@@ -222,6 +231,7 @@
 			packageReferences = (
 				DE37C6D52CF8E68000EDDDD9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				26801DBF2D3D55580031314C /* XCRemoteSwiftPackageReference "ViewInspector" */,
+				2686E89B2D50CD980014385E /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = DE17747C2CE4F9C40012613C /* Products */;
@@ -592,6 +602,14 @@
 				minimumVersion = 0.10.1;
 			};
 		};
+		2686E89B2D50CD980014385E /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-snapshot-testing";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.18.0;
+			};
+		};
 		DE37C6D52CF8E68000EDDDD9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -607,6 +625,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 26801DBF2D3D55580031314C /* XCRemoteSwiftPackageReference "ViewInspector" */;
 			productName = ViewInspector;
+		};
+		2686E89C2D50CD980014385E /* InlineSnapshotTesting */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2686E89B2D50CD980014385E /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */;
+			productName = InlineSnapshotTesting;
+		};
+		2686E89E2D50CD980014385E /* SnapshotTesting */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2686E89B2D50CD980014385E /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */;
+			productName = SnapshotTesting;
+		};
+		2686E8A02D50CD980014385E /* SnapshotTestingCustomDump */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2686E89B2D50CD980014385E /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */;
+			productName = SnapshotTestingCustomDump;
 		};
 		DE37C6D62CF8E68000EDDDD9 /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -7,12 +7,10 @@
 
 import SwiftUI
 
-struct TransactionsView<ViewModel: TransactionsViewModelProtocol>: View, InspectableView {
+struct TransactionsView<ViewModel: TransactionsViewModelProtocol>: View {
     @EnvironmentObject var coordinator: MainCoordinator
     @ObservedObject var viewModel: ViewModel
     @State private var toast: Toast?
-    
-    var didAppear: ((Self) -> Void)?
 
     var body: some View {
         Button {
@@ -33,9 +31,6 @@ struct TransactionsView<ViewModel: TransactionsViewModelProtocol>: View, Inspect
         }
         .refreshable {
             await getTransactions()
-        }
-        .onAppear {
-            didAppear?(self)
         }
         .toastView(toast: $toast)
     }

@@ -12,7 +12,6 @@ import ViewInspector
 import SwiftUICore
 
 struct LoginViewTests: BaseViewTest {
-    typealias V = LoginView<LoginViewModelMock>
     let viewModel: LoginViewModelMock
     let loginView: LoginView<LoginViewModelMock>
     let authServiceMock: AuthServiceMock
@@ -35,7 +34,7 @@ struct LoginViewTests: BaseViewTest {
     @MainActor
     func loginView() async throws {
         // When
-        let view = try await setup(loginView, coordinator: coordinator)
+        let view = loginView.environmentObject(coordinator)
 
         // Then
         let inspect = try view.inspect()

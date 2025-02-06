@@ -12,7 +12,6 @@ import SwiftUI
 import ViewInspector
 
 struct WalletViewTests: BaseViewTest, TestData {
-    typealias V = WalletView<WalletViewModelMock>
     let viewModel: WalletViewModelMock
     var walletView: WalletView<WalletViewModelMock>
 
@@ -29,7 +28,7 @@ struct WalletViewTests: BaseViewTest, TestData {
         viewModel.totalValue = 123.7869
         
         // When
-        let view = try await setup(walletView)
+        let view = walletView.environmentObject(coordinator)
 
         // Then
         let inspect = try view.inspect()
@@ -72,7 +71,7 @@ struct WalletViewTests: BaseViewTest, TestData {
         viewModel.walletCoins = walletCoins
 
         // When
-        let view = try await setup(walletView)
+        let view = walletView.environmentObject(coordinator)
 
         // Then
         let inspect = try view.inspect()

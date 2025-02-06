@@ -12,7 +12,6 @@ import ViewInspector
 import SwiftUICore
 
 struct RegistrationViewTests: BaseViewTest {
-    typealias V = RegistrationView<RegistrationViewModelMock>
     let viewModel: RegistrationViewModelMock
     let registrationView: RegistrationView<RegistrationViewModelMock>
     let authServiceMock: AuthServiceMock
@@ -35,7 +34,7 @@ struct RegistrationViewTests: BaseViewTest {
     @MainActor
     func registrationView() async throws {
         // When
-        let view = try await setup(registrationView, coordinator: coordinator)
+        let view = registrationView.environmentObject(coordinator)
 
         // Then
         let inspect = try view.inspect()

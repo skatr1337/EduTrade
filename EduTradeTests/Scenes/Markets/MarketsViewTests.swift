@@ -26,7 +26,7 @@ struct MarketsViewTests: BaseViewTest, TestData {
     @MainActor
     mutating func marketsViewHeader() async throws {
         // When
-        let view = try await setup(marketsView)
+        let view = marketsView.environmentObject(coordinator)
 
         // Then
         let inspect = try view.inspect()
@@ -55,7 +55,7 @@ struct MarketsViewTests: BaseViewTest, TestData {
         viewModel.coins = coins
         
         // When
-        let view = try await setup(marketsView)
+        let view = marketsView.environmentObject(coordinator)
 
         // Then
         let inspect = try view.inspect()

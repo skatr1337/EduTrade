@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct RegistrationView<ViewModel: RegistrationViewModelProtocol>: View, InspectableView {
+struct RegistrationView<ViewModel: RegistrationViewModelProtocol>: View {
     @State private var email = ""
     @State private var fullname = ""
     @State private var password = ""
@@ -15,8 +15,6 @@ struct RegistrationView<ViewModel: RegistrationViewModelProtocol>: View, Inspect
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var coordinator: MainCoordinator
     @ObservedObject var viewModel: ViewModel
-
-    var didAppear: ((Self) -> Void)?
     
     var body: some View {
         let formIsValid = viewModel.formIsValid(
@@ -114,9 +112,6 @@ struct RegistrationView<ViewModel: RegistrationViewModelProtocol>: View, Inspect
                 }
                 .font(.system(size: 14))
             }
-        }
-        .onAppear {
-            didAppear?(self)
         }
     }
 }

@@ -7,13 +7,12 @@
 
 import SwiftUI
 
-struct TradeView<ViewModel: TradeViewModelProtocol>: View, InspectableView {
+struct TradeView<ViewModel: TradeViewModelProtocol>: View {
     @ObservedObject var viewModel: ViewModel
     @State var inProgress = false
     @State private var toast: Toast?
 
     let coin: Coin
-    var didAppear: ((Self) -> Void)?
 
     var body: some View {
         VStack {
@@ -30,9 +29,6 @@ struct TradeView<ViewModel: TradeViewModelProtocol>: View, InspectableView {
         .padding()
         .task {
             await getCoin()
-        }
-        .onAppear {
-            didAppear?(self)
         }
         .toastView(toast: $toast)
     }

@@ -12,7 +12,6 @@ import SwiftUI
 import ViewInspector
 
 struct TradeViewTests: BaseViewTest, TestData {
-    typealias V = TradeView<TradeViewModelMock>
     let viewModel: TradeViewModelMock
 
     @MainActor
@@ -46,9 +45,10 @@ struct TradeViewTests: BaseViewTest, TestData {
         viewModel.getCoinResult = input.1
         viewModel.walletSourceCoin = input.2
         viewModel.walletDestinationCoin = input.3
+        viewModel.exchangeCoin = input.1
 
         // When
-        let view = try await setup(tradeView)
+        let view = tradeView.environmentObject(coordinator)
 
         // Then
         let inspect = try view.inspect()

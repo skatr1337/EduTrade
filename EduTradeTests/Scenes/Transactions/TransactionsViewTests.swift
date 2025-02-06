@@ -12,7 +12,6 @@ import SwiftUI
 import ViewInspector
 
 struct TransactionsViewTests: BaseViewTest, TestData {
-    typealias V = TransactionsView<TransactionsViewModelMock>
     let viewModel: TransactionsViewModelMock
     var transactionsView: TransactionsView<TransactionsViewModelMock>
     static let testDate = Date()
@@ -48,7 +47,7 @@ struct TransactionsViewTests: BaseViewTest, TestData {
         viewModel.transactions = transactions
 
         // When
-        let view = try await setup(transactionsView)
+        let view = transactionsView.environmentObject(coordinator)
 
         // Then
         let inspect = try view.inspect()

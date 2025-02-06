@@ -7,12 +7,10 @@
 
 import SwiftUI
 
-struct WalletView<ViewModel: WalletViewModelProtocol>: View, InspectableView {
+struct WalletView<ViewModel: WalletViewModelProtocol>: View {
     @EnvironmentObject var coordinator: MainCoordinator
     @ObservedObject var viewModel: ViewModel
     @State private var toast: Toast?
-
-    var didAppear: ((Self) -> Void)?
 
     var body: some View {
         ZStack {
@@ -26,9 +24,6 @@ struct WalletView<ViewModel: WalletViewModelProtocol>: View, InspectableView {
             }
             .refreshable {
                 await getAccount()
-            }
-            .onAppear {
-                didAppear?(self)
             }
             .toastView(toast: $toast)
         }
