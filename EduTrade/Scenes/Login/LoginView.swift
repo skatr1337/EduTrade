@@ -19,7 +19,7 @@ struct LoginView<ViewModel: LoginViewModelProtocol>: View {
             VStack {
                 
                 // image
-                Image("Bitcoin")
+                Image(systemName: "firewall.fill")
                     .resizable()
                     .scaledToFill()
                     .frame(width: 100, height: 120)

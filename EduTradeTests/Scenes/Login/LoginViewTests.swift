@@ -39,7 +39,7 @@ struct LoginViewTests: BaseViewTest {
         // Then
         let inspect = try view.inspect()
         let image = try inspect.find(viewWithAccessibilityIdentifier: "image").image()
-        let testImage = Image("Bitcoin").resizable()
+        let testImage = Image(systemName: "firewall.fill").resizable()
         try #expect(image.actualImage() == testImage)
         let secureField = try inspect.find(viewWithAccessibilityIdentifier: "secureField").secureField()
         try #expect(secureField.input() == "")

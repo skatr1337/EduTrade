@@ -42,13 +42,6 @@ struct SettingsView: View {
                     } label: {
                         SettingsRowView(imageName: "arrow.left.circle.fill", title: String(localized: "Sign out"))
                     }
-                    Button {
-                        print("Delete account")
-                    } label: {
-                        SettingsRowView(imageName: "minus.circle.fill", title:
-                            String(localized:"Delete account")
-                        )
-                    }
                 }
             }
             .toastView(toast: $toast)

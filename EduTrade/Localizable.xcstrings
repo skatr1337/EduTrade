@@ -103,6 +103,7 @@
       }
     },
     "Delete account" : {
+      "extractionState" : "stale",
       "localizations" : {
         "pl" : {
           "stringUnit" : {

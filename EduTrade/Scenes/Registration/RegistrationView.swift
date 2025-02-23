@@ -24,7 +24,7 @@ struct RegistrationView<ViewModel: RegistrationViewModelProtocol>: View {
             fullname: fullname
         )
         VStack {
-            Image("Bitcoin")
+            Image(systemName: "firewall.fill")
                 .resizable()
                 .scaledToFill()
                 .frame(width: 100, height: 120)
